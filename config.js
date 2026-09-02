@@ -2,20 +2,13 @@ const CFG = {
 
   name: "RFour",
   tag: [
-    "There is hope, even when your brain tells you there isn't.",
-    "Bad days end. They always have.",
-    "You've survived every hard moment so far. That's undefeated.",
-    "The storm doesn't last. You do.",
-    "Tomorrow doesn't know how today felt.",
-    "Small steps still count as moving forward.",
-    "You're allowed to rest without giving up.",
-    "The lowest point is still just a point, not a place to stay.",
+    "Suicide is the intentional act of ending one's own life.",
   ],
   avatar: "avatar.png",
   gateIcon: "✙",
 
   siteTitle: "suic1.de",
-  siteDescription: "There is hope, even when your brain tells you there isn't.",
+  siteDescription: "Suicide is the intentional act of ending one's own life.",
   thumbnail: "thumbnail.png",
   favicon: "favicon.png",
   themeColor: "#ffffff",
