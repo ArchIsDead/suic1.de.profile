@@ -116,6 +116,10 @@ document.documentElement.style.setProperty("--tagfont", CFG.fontTag);
 document.documentElement.style.setProperty("--btnfont", CFG.fontButtons);
 document.documentElement.style.setProperty("--cardcorner", CFG.cardCorner);
 document.documentElement.style.setProperty("--btncorner", CFG.buttonCorner);
+document.documentElement.style.setProperty("--blur", `${Math.max(0, Number(CFG.glassBlur ?? 26))}px`);
+const bb = Math.max(0, Number(CFG.backgroundBlur || 0));
+document.documentElement.style.setProperty("--backblur", `${bb}px`);
+document.documentElement.style.setProperty("--backscale", String(1 + bb * 0.006));
 
 if (!CFG.buttons || CFG.buttons.length === 0) {
   bt.remove();
@@ -133,7 +137,7 @@ if (CFG.showMusic) {
   tk.remove();
 }
 
-icon(document.getElementById("mark"), CFG.gateIcon);
+if (CFG.gateIcon) icon(document.getElementById("mark"), CFG.gateIcon);
 
 const back = document.getElementById("back");
 back.appendChild(media(CFG.bg, "backmedia"));
@@ -287,12 +291,15 @@ CFG.links.forEach(({ n, u, i }) => {
   bt.appendChild(el);
 });
 
-gt.addEventListener("click", () => {
+let entered = false;
+
+function enter() {
+  if (entered) return;
+  entered = true;
   gt.classList.add("gone");
   if (CFG.showMusic) {
     tk.volume = 0.6;
     tk.play().catch(() => {});
-    si.src = CFG.pauseIcon;
     sb.classList.add("in");
   }
   backdrop();
@@ -304,26 +311,61 @@ gt.addEventListener("click", () => {
       line.textContent = TAGS[0];
     }
   }, CFG.typeStartDelay);
-});
+}
+
+function whenReady(fn) {
+  let fired = false;
+  const go = () => {
+    if (fired) return;
+    fired = true;
+    fn();
+  };
+  if (document.readyState === "complete") go();
+  else {
+    window.addEventListener("load", go);
+    setTimeout(go, 3000);
+  }
+}
+
+function onGesture(fn) {
+  const events = ["pointerdown", "pointerup", "touchend", "click", "keydown"];
+  const run = e => {
+    let r = false;
+    try { r = fn(e); } catch (err) { r = false; }
+    Promise.resolve(r).then(done => {
+      if (done) events.forEach(ev => window.removeEventListener(ev, run, true));
+    }).catch(() => {});
+  };
+  events.forEach(ev => window.addEventListener(ev, run, true));
+}
 
 if (CFG.showMusic) {
+  tk.addEventListener("play", () => { si.src = CFG.pauseIcon; });
+  tk.addEventListener("pause", () => { si.src = CFG.playIcon; });
+
   sb.addEventListener("click", () => {
-    if (tk.paused) {
-      tk.play();
-      si.src = CFG.pauseIcon;
-    } else {
-      tk.pause();
-      si.src = CFG.playIcon;
-    }
+    if (tk.paused) tk.play().catch(() => {});
+    else tk.pause();
     si.style.transform = "scale(0.6)";
     requestAnimationFrame(() => { si.style.transform = "scale(1)"; });
+  });
+
+  onGesture(e => {
+    if (!entered) return false;
+    if (!tk.paused) return true;
+    if (e && e.target && sb.contains(e.target)) return false;
+    return tk.play().then(() => true).catch(() => false);
   });
 }
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const coarse = window.matchMedia("(pointer: coarse)").matches;
 const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const MODE = !CFG.tilt ? "off" : (CFG.tiltMode === "auto" || !CFG.tiltMode) ? (coarse ? "gyro" : "pointer") : CFG.tiltMode;
+const TRIGGER = CFG.tiltTrigger === "hold" ? "hold" : "move";
+const MODE = !CFG.tilt || CFG.tiltMode === "off" ? "off"
+  : TRIGGER === "hold" ? "hold"
+  : (CFG.tiltMode === "pointer" || CFG.tiltMode === "gyro") ? CFG.tiltMode
+  : (coarse ? "gyro" : "pointer");
 const SPAN = CFG.tiltStrength || 12;
 const BASEX = MODE === "off" ? 0 : CFG.tiltRestX;
 const BASEY = MODE === "off" ? 0 : CFG.tiltRestY;
@@ -332,16 +374,45 @@ const m = { x: 0, y: 0, vx: 0, vy: 0, rx: BASEX, ry: BASEY, s: 0.92, ix: 0, iy: 
 let lastMove = -1e9;
 let gyroLive = false;
 let gyroRef = null;
+let holding = null;
+let holdCard = false;
+
+function aim(p) {
+  m.ix = clamp((p.y - (VH / 2 + m.y)) / (VH / 2), -1, 1);
+  m.iy = clamp((p.x - (VW / 2 + m.x)) / (VW / 2), -1, 1);
+  lastMove = performance.now();
+}
 
 if (MODE === "pointer") {
-  document.addEventListener("pointermove", e => {
+  window.addEventListener("pointermove", e => {
     if (e.pointerType === "touch") return;
-    const p = pt(e);
-    m.ix = clamp((p.y - VH / 2) / (VH / 2), -1, 1);
-    m.iy = clamp((p.x - VW / 2) / (VW / 2), -1, 1);
-    lastMove = performance.now();
-  });
+    aim(pt(e));
+  }, true);
   document.documentElement.addEventListener("mouseleave", () => { m.ix = 0; m.iy = 0; });
+}
+
+if (MODE === "hold") {
+  const letGo = e => {
+    if (holding === null || (e && e.pointerId !== holding)) return;
+    holding = null;
+    holdCard = false;
+    m.ix = 0;
+    m.iy = 0;
+    lastMove = performance.now();
+  };
+  window.addEventListener("pointerdown", e => {
+    if (holding !== null || e.button > 0) return;
+    holding = e.pointerId;
+    holdCard = cd.contains(e.target);
+    aim(pt(e));
+  }, true);
+  window.addEventListener("pointermove", e => {
+    if (holding === null || e.pointerId !== holding) return;
+    aim(pt(e));
+  }, true);
+  window.addEventListener("pointerup", letGo, true);
+  window.addEventListener("pointercancel", letGo, true);
+  window.addEventListener("blur", () => letGo(null));
 }
 
 function onGyro(e) {
@@ -367,11 +438,10 @@ function startGyro() {
 
 if (MODE === "gyro" && window.isSecureContext && typeof DeviceOrientationEvent !== "undefined") {
   if (typeof DeviceOrientationEvent.requestPermission === "function") {
-    gt.addEventListener("click", () => {
-      DeviceOrientationEvent.requestPermission().then(state => {
-        if (state === "granted") startGyro();
-      }).catch(() => {});
-    }, { once: true });
+    onGesture(() => DeviceOrientationEvent.requestPermission().then(state => {
+      if (state === "granted") startGyro();
+      return true;
+    }).catch(() => false));
   } else {
     startGyro();
   }
@@ -466,8 +536,9 @@ function tick(now) {
     }
 
     const wantIdle = !CFG.tiltIdle || calm || MODE === "off" ? 0
-      : MODE === "pointer" ? (now - lastMove > 2500 ? 1 : 0)
-      : (gyroLive ? 0 : 1);
+      : MODE === "gyro" ? (gyroLive ? 0 : 1)
+      : holding !== null ? 0
+      : (now - lastMove > 2500 ? 1 : 0);
     m.idle += (wantIdle - m.idle) * (1 - Math.exp(-dt * 1.5));
 
     const swayX = Math.sin(now * 0.0006) * SPAN * 0.22 * m.idle;
@@ -477,12 +548,12 @@ function tick(now) {
 
     const tx = BASEX - m.ix * SPAN + swayX + dragX;
     const ty = BASEY + m.iy * SPAN + swayY + dragY;
-    const tk = 1 - Math.exp(-dt * 9);
-    m.rx += (tx - m.rx) * tk;
-    m.ry += (ty - m.ry) * tk;
+    const ease = 1 - Math.exp(-dt * 9);
+    m.rx += (tx - m.rx) * ease;
+    m.ry += (ty - m.ry) * ease;
 
     const shown = cd.classList.contains("in");
-    const ts = !shown ? 0.92 : dragging ? 1.02 : 1;
+    const ts = !shown ? 0.92 : dragging ? 1.02 : holdCard ? 0.985 : 1;
     m.s += (ts - m.s) * (1 - Math.exp(-dt * 10));
 
     cd.style.transform =
@@ -609,3 +680,10 @@ function backdrop() {
   window.addEventListener("resize", size);
   requestAnimationFrame(frame);
 })();
+
+if (CFG.gateIcon) {
+  gt.addEventListener("click", enter);
+} else {
+  gt.remove();
+  whenReady(enter);
+}
