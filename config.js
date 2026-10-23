@@ -30,7 +30,7 @@ const CFG = {
   showTag: true,
   showMusic: true,
 
-  forceLandscape: true,
+  forceLandscape: false,
   rotateBelow: 1,
 
   cardCorner: "28px",
@@ -46,7 +46,7 @@ const CFG = {
   tiltMode: "auto",
   tiltStrength: 12,
   tiltIdle: true,
-  drag: true,
+  drag: false,
   dragReturn: true,
   tiltRestX: 6,
   tiltRestY: -8,
