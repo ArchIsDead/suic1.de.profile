@@ -19,7 +19,10 @@
   --icon-filter: invert(1);
 
   --glass-fill: linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05));
-  --glass-blur: blur(26px) saturate(150%);
+  --blur: 26px;
+  --backblur: 0px;
+  --backscale: 1;
+  --glass-blur: blur(var(--blur)) saturate(150%);
   --glass-edge-a: rgba(255, 255, 255, 0.55);
   --glass-edge-b: rgba(255, 255, 255, 0.06);
   --glass-shadow: 0 28px 60px rgba(0, 0, 0, 0.45), 0 8px 18px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.28);
@@ -40,11 +43,11 @@
   --veil: rgba(255, 255, 255, 0.28);
   --gate-bg: rgba(255, 255, 255, 0.45);
   --text: #0e0e10;
-  --text-soft: rgba(14, 14, 16, 0.62);
+  --text-soft: rgba(14, 14, 16, 0.74);
   --icon-filter: none;
 
-  --glass-fill: linear-gradient(145deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.22));
-  --glass-blur: blur(26px) saturate(170%);
+  --glass-fill: linear-gradient(145deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.3));
+  --glass-blur: blur(var(--blur)) saturate(170%);
   --glass-edge-a: rgba(255, 255, 255, 0.95);
   --glass-edge-b: rgba(255, 255, 255, 0.25);
   --glass-shadow: 0 24px 50px rgba(30, 30, 40, 0.22), 0 6px 14px rgba(30, 30, 40, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
@@ -84,6 +87,8 @@ img, video {
 html, body {
   height: 100%;
   overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
 }
 
 body {
@@ -121,14 +126,6 @@ body {
   font-size: 50px;
   animation: pulse 2s infinite ease-in-out;
   transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-#mark:empty {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  border: 1.5px solid var(--text);
-  background: var(--inner-fill);
 }
 
 #gate:active #mark {
@@ -177,9 +174,9 @@ body {
   width: 100%;
   height: auto;
   min-height: 100%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(var(--backscale));
   object-fit: cover;
-  filter: grayscale(100%) contrast(1.05);
+  filter: grayscale(100%) contrast(1.05) blur(var(--backblur));
 }
 
 #stage::before {
