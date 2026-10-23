@@ -62,6 +62,47 @@ meta("twitter:title", CFG.siteTitle);
 meta("twitter:description", CFG.siteDescription);
 meta("twitter:image", CFG.thumbnail);
 
+const PAL = {
+  dark: { dot: "#c8c8c8", sparks: ["#ffffff", "#dcdcdc", "#f2f2f2"] },
+  light: { dot: "#4a4a4a", sparks: ["#111111", "#333333", "#555555"] },
+};
+const schemeQuery = window.matchMedia("(prefers-color-scheme: light)");
+let theme = "dark";
+function setTheme() {
+  if (CFG.theme === "light" || CFG.theme === "dark") theme = CFG.theme;
+  else theme = schemeQuery.matches ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", theme);
+}
+setTheme();
+if (schemeQuery.addEventListener) schemeQuery.addEventListener("change", setTheme);
+else if (schemeQuery.addListener) schemeQuery.addListener(setTheme);
+
+let VW = window.innerWidth;
+let VH = window.innerHeight;
+let ROT = false;
+
+function layout() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  ROT = !!CFG.forceLandscape && w / h < (CFG.rotateBelow || 1);
+  VW = ROT ? h : w;
+  VH = ROT ? w : h;
+  const root = document.documentElement;
+  root.classList.toggle("rotated", ROT);
+  root.style.setProperty("--vw", `${VW}px`);
+  root.style.setProperty("--vh", `${VH}px`);
+  root.style.setProperty("--sw", `${w}px`);
+}
+
+function pt(e) {
+  if (!ROT) return { x: e.clientX, y: e.clientY };
+  return { x: e.clientY, y: window.innerWidth - e.clientX };
+}
+
+layout();
+window.addEventListener("resize", layout);
+window.addEventListener("orientationchange", layout);
+
 const gt = document.getElementById("gate");
 const cd = document.getElementById("card");
 const tk = document.getElementById("track");
@@ -279,58 +320,196 @@ if (CFG.showMusic) {
   });
 }
 
-const SPAN = CFG.tiltStrength;
-const BASEX = CFG.tilt ? CFG.tiltRestX : 0;
-const BASEY = CFG.tilt ? CFG.tiltRestY : 0;
-let smoothX = BASEX;
-let smoothY = BASEY;
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const coarse = window.matchMedia("(pointer: coarse)").matches;
+const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const MODE = !CFG.tilt ? "off" : (CFG.tiltMode === "auto" || !CFG.tiltMode) ? (coarse ? "gyro" : "pointer") : CFG.tiltMode;
+const SPAN = CFG.tiltStrength || 12;
+const BASEX = MODE === "off" ? 0 : CFG.tiltRestX;
+const BASEY = MODE === "off" ? 0 : CFG.tiltRestY;
 
-document.documentElement.style.setProperty("--tx", `${BASEX}deg`);
-document.documentElement.style.setProperty("--ty", `${BASEY}deg`);
-document.documentElement.style.setProperty("--tx2", `${CFG.tilt ? BASEX * 2.3 : 0}deg`);
-document.documentElement.style.setProperty("--ty2", `${CFG.tilt ? BASEY * 2 : 0}deg`);
-document.documentElement.style.setProperty("--txm", `${CFG.tilt ? BASEX * 0.7 : 0}deg`);
-document.documentElement.style.setProperty("--tym", `${CFG.tilt ? BASEY * 0.5 : 0}deg`);
+const m = { x: 0, y: 0, vx: 0, vy: 0, rx: BASEX, ry: BASEY, s: 0.92, ix: 0, iy: 0, idle: 1 };
+let lastMove = -1e9;
+let gyroLive = false;
+let gyroRef = null;
 
-function apply(rx, ry) {
-  cd.style.transform = `translate(-50%, -50%) perspective(1000px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+if (MODE === "pointer") {
+  document.addEventListener("pointermove", e => {
+    if (e.pointerType === "touch") return;
+    const p = pt(e);
+    m.ix = clamp((p.y - VH / 2) / (VH / 2), -1, 1);
+    m.iy = clamp((p.x - VW / 2) / (VW / 2), -1, 1);
+    lastMove = performance.now();
+  });
+  document.documentElement.addEventListener("mouseleave", () => { m.ix = 0; m.iy = 0; });
 }
 
-function gyro(e) {
+function onGyro(e) {
   if (e.beta === null || e.gamma === null) return;
-  const beta = Math.max(-45, Math.min(45, e.beta - 45));
-  const gamma = Math.max(-45, Math.min(45, e.gamma));
-  const targetX = BASEX - (beta / 45) * SPAN;
-  const targetY = BASEY + (gamma / 45) * SPAN;
-  smoothX += (targetX - smoothX) * 0.15;
-  smoothY += (targetY - smoothY) * 0.15;
-  apply(smoothX, smoothY);
+  const angle = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+  let x = e.beta, y = e.gamma;
+  const a = ((angle + (ROT ? 90 : 0)) % 360 + 360) % 360;
+  if (a === 90) { x = -e.gamma; y = e.beta; }
+  else if (a === 270) { x = e.gamma; y = -e.beta; }
+  else if (a === 180) { x = -e.beta; y = -e.gamma; }
+  if (!gyroRef) gyroRef = { x, y };
+  gyroRef.x += (x - gyroRef.x) * 0.003;
+  gyroRef.y += (y - gyroRef.y) * 0.003;
+  m.ix = clamp((x - gyroRef.x) / 28, -1, 1);
+  m.iy = clamp((y - gyroRef.y) / 28, -1, 1);
+  gyroLive = true;
 }
 
 function startGyro() {
-  window.addEventListener("deviceorientation", gyro);
+  window.addEventListener("deviceorientation", onGyro);
+  window.addEventListener("orientationchange", () => { gyroRef = null; });
 }
 
-if (CFG.tilt && CFG.tiltGyro && window.isSecureContext) {
-  if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
+if (MODE === "gyro" && window.isSecureContext && typeof DeviceOrientationEvent !== "undefined") {
+  if (typeof DeviceOrientationEvent.requestPermission === "function") {
     gt.addEventListener("click", () => {
       DeviceOrientationEvent.requestPermission().then(state => {
         if (state === "granted") startGyro();
       }).catch(() => {});
     }, { once: true });
-  } else if (typeof DeviceOrientationEvent !== "undefined") {
+  } else {
     startGyro();
   }
 }
+
+let drag = null;
+let suppress = false;
+
+if (CFG.drag !== false) {
+  cd.addEventListener("dragstart", e => e.preventDefault());
+
+  cd.addEventListener("pointerdown", e => {
+    if (e.button > 0 || drag) return;
+    const p = pt(e);
+    drag = {
+      id: e.pointerId,
+      sx: p.x,
+      sy: p.y,
+      gx: p.x - VW / 2 - m.x,
+      gy: p.y - VH / 2 - m.y,
+      tx: m.x,
+      ty: m.y,
+      active: false,
+    };
+  });
+
+  window.addEventListener("pointermove", e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const p = pt(e);
+    if (!drag.active) {
+      if (Math.hypot(p.x - drag.sx, p.y - drag.sy) < 6) return;
+      drag.active = true;
+    }
+    const maxX = Math.max(0, (VW - cd.offsetWidth) / 2 - 8);
+    const maxY = Math.max(0, (VH - cd.offsetHeight) / 2 - 8);
+    drag.tx = soft(p.x - VW / 2 - drag.gx, maxX);
+    drag.ty = soft(p.y - VH / 2 - drag.gy, maxY);
+  });
+
+  const release = e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    if (drag.active) {
+      suppress = true;
+      setTimeout(() => { suppress = false; }, 60);
+    }
+    drag = null;
+  };
+  window.addEventListener("pointerup", release);
+  window.addEventListener("pointercancel", release);
+
+  cd.addEventListener("click", e => {
+    if (!suppress) return;
+    e.preventDefault();
+    e.stopPropagation();
+  }, true);
+}
+
+function soft(v, max) {
+  const over = Math.abs(v) - max;
+  if (over <= 0) return v;
+  return Math.sign(v) * (max + over * 0.25);
+}
+
+let lastTime = performance.now();
+
+function tick(now) {
+  const dt = Math.min((now - lastTime) / 1000, 0.032);
+  lastTime = now;
+
+  if (dt > 0) {
+    const dragging = !!(drag && drag.active);
+
+    if (dragging) {
+      const k = 1 - Math.exp(-dt * 20);
+      const px = m.x, py = m.y;
+      m.x += (drag.tx - m.x) * k;
+      m.y += (drag.ty - m.y) * k;
+      m.vx += ((m.x - px) / dt - m.vx) * 0.3;
+      m.vy += ((m.y - py) / dt - m.vy) * 0.3;
+    } else if (CFG.dragReturn !== false) {
+      const K = 140, C = 17;
+      m.vx += (-K * m.x - C * m.vx) * dt;
+      m.vy += (-K * m.y - C * m.vy) * dt;
+      m.x += m.vx * dt;
+      m.y += m.vy * dt;
+      if (Math.abs(m.x) < 0.01 && Math.abs(m.vx) < 0.05) { m.x = 0; m.vx = 0; }
+      if (Math.abs(m.y) < 0.01 && Math.abs(m.vy) < 0.05) { m.y = 0; m.vy = 0; }
+    } else {
+      const d = Math.exp(-dt * 8);
+      m.vx *= d;
+      m.vy *= d;
+    }
+
+    const wantIdle = !CFG.tiltIdle || calm || MODE === "off" ? 0
+      : MODE === "pointer" ? (now - lastMove > 2500 ? 1 : 0)
+      : (gyroLive ? 0 : 1);
+    m.idle += (wantIdle - m.idle) * (1 - Math.exp(-dt * 1.5));
+
+    const swayX = Math.sin(now * 0.0006) * SPAN * 0.22 * m.idle;
+    const swayY = Math.cos(now * 0.0004) * SPAN * 0.3 * m.idle;
+    const dragX = MODE === "off" ? 0 : clamp(-m.vy * 0.012, -16, 16);
+    const dragY = MODE === "off" ? 0 : clamp(m.vx * 0.012, -16, 16);
+
+    const tx = BASEX - m.ix * SPAN + swayX + dragX;
+    const ty = BASEY + m.iy * SPAN + swayY + dragY;
+    const tk = 1 - Math.exp(-dt * 9);
+    m.rx += (tx - m.rx) * tk;
+    m.ry += (ty - m.ry) * tk;
+
+    const shown = cd.classList.contains("in");
+    const ts = !shown ? 0.92 : dragging ? 1.02 : 1;
+    m.s += (ts - m.s) * (1 - Math.exp(-dt * 10));
+
+    cd.style.transform =
+      `translate3d(${m.x.toFixed(2)}px, ${m.y.toFixed(2)}px, 0) translate(-50%, -50%) ` +
+      `perspective(1100px) rotateX(${m.rx.toFixed(3)}deg) rotateY(${m.ry.toFixed(3)}deg) scale(${m.s.toFixed(4)})`;
+
+    const nx = clamp((m.ry - BASEY) / SPAN, -1.5, 1.5);
+    const ny = clamp(-(m.rx - BASEX) / SPAN, -1.5, 1.5);
+    cd.style.setProperty("--px", nx.toFixed(3));
+    cd.style.setProperty("--py", ny.toFixed(3));
+    cd.style.setProperty("--sx", `${(50 + nx * 22).toFixed(2)}%`);
+    cd.style.setProperty("--sy", `${(50 + ny * 22).toFixed(2)}%`);
+  }
+
+  requestAnimationFrame(tick);
+}
+
+requestAnimationFrame(tick);
 
 function backdrop() {
   const c = document.getElementById("drift");
   const ctx = c.getContext("2d");
   let dots = [];
-  let mx = window.innerWidth / 2;
-  document.addEventListener("mousemove", e => { mx = e.clientX; });
+  let mx = VW / 2;
+  document.addEventListener("mousemove", e => { mx = pt(e).x; });
 
-  function size() { c.width = window.innerWidth; c.height = window.innerHeight; }
+  function size() { c.width = VW; c.height = VH; }
   function seed() {
     dots = Array.from({ length: 70 }, () => ({
       x: Math.random() * c.width,
@@ -345,7 +524,7 @@ function backdrop() {
 
   function frame() {
     ctx.clearRect(0, 0, c.width, c.height);
-    ctx.fillStyle = "#c8c8c8";
+    ctx.fillStyle = PAL[theme].dot;
     const shift = -(mx - c.width / 2) * 0.08;
     for (const d of dots) {
       d.y += d.fall;
@@ -373,9 +552,9 @@ function backdrop() {
   let bits = [];
   let mx = -999, my = -999, px = -999, py = -999;
 
-  document.addEventListener("mousemove", e => { mx = e.clientX; my = e.clientY; });
+  document.addEventListener("mousemove", e => { const p = pt(e); mx = p.x; my = p.y; });
 
-  function size() { c.width = window.innerWidth; c.height = window.innerHeight; }
+  function size() { c.width = VW; c.height = VH; }
 
   function star(x, y, s, rot) {
     ctx.save();
@@ -392,8 +571,6 @@ function backdrop() {
     ctx.restore();
   }
 
-  const colors = ["#ffffff", "#dcdcdc", "#f2f2f2"];
-
   function frame() {
     ctx.clearRect(0, 0, c.width, c.height);
     if (mx !== px || my !== py) {
@@ -407,7 +584,7 @@ function backdrop() {
           r: Math.random() * Math.PI * 2,
           rs: (Math.random() - 0.5) * 0.12,
           tw: Math.random() * Math.PI * 2,
-          c: colors[Math.floor(Math.random() * colors.length)],
+          c: PAL[theme].sparks[Math.floor(Math.random() * 3)],
         });
       }
       px = mx; py = my;
@@ -421,13 +598,10 @@ function backdrop() {
       const tw = 0.75 + 0.25 * Math.sin(performance.now() * 0.015 + b.tw);
       ctx.globalAlpha = l;
       ctx.fillStyle = b.c;
-      ctx.shadowColor = b.c;
-      ctx.shadowBlur = 8;
       star(b.x, b.y, b.s * l * tw, b.r);
     }
     bits = bits.filter(b => b.l > 0);
     ctx.globalAlpha = 1;
-    ctx.shadowBlur = 0;
     requestAnimationFrame(frame);
   }
 
