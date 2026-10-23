@@ -5,7 +5,7 @@ const CFG = {
     "Suicide is the intentional act of ending one's own life.",
   ],
   avatar: "avatar.png",
-  gateIcon: "☩",
+  gateIcon: "",
 
   siteTitle: "suic1.de",
   siteDescription: "Suicide is the intentional act of ending one's own life.",
@@ -30,7 +30,7 @@ const CFG = {
   showTag: true,
   showMusic: true,
 
-  forceLandscape: false,
+  forceLandscape: true,
   rotateBelow: 1,
 
   cardCorner: "28px",
@@ -42,11 +42,15 @@ const CFG = {
   typePauseAtEnd: 1800,
   typePauseAtStart: 500,
 
+  glassBlur: 26,
+  backgroundBlur: 0,
+
   tilt: true,
+  tiltTrigger: "move",
   tiltMode: "auto",
   tiltStrength: 12,
   tiltIdle: true,
-  drag: false,
+  drag: true,
   dragReturn: true,
   tiltRestX: 6,
   tiltRestY: -8,
