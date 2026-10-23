@@ -5,7 +5,7 @@ const CFG = {
     "Suicide is the intentional act of ending one's own life.",
   ],
   avatar: "avatar.png",
-  gateIcon: "",
+  gateIcon: "☩",
 
   siteTitle: "suic1.de",
   siteDescription: "Suicide is the intentional act of ending one's own life.",
