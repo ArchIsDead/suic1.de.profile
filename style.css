@@ -10,6 +10,49 @@
   --btnfont: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --cardcorner: 28px;
   --btncorner: 16px;
+
+  --page: #060606;
+  --veil: rgba(0, 0, 0, 0.45);
+  --gate-bg: rgba(6, 6, 6, 0.55);
+  --text: #ffffff;
+  --text-soft: rgba(255, 255, 255, 0.68);
+  --icon-filter: invert(1);
+
+  --glass-fill: linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05));
+  --glass-blur: blur(26px) saturate(150%);
+  --glass-edge-a: rgba(255, 255, 255, 0.55);
+  --glass-edge-b: rgba(255, 255, 255, 0.06);
+  --glass-shadow: 0 28px 60px rgba(0, 0, 0, 0.45), 0 8px 18px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  --glass-shine: rgba(255, 255, 255, 0.14);
+
+  --inner-fill: rgba(255, 255, 255, 0.08);
+  --inner-fill-hover: rgba(255, 255, 255, 0.15);
+  --inner-edge: rgba(255, 255, 255, 0.16);
+
+  --px: 0;
+  --py: 0;
+  --sx: 50%;
+  --sy: 50%;
+}
+
+:root[data-theme="light"] {
+  --page: #e9e9ec;
+  --veil: rgba(255, 255, 255, 0.28);
+  --gate-bg: rgba(255, 255, 255, 0.45);
+  --text: #0e0e10;
+  --text-soft: rgba(14, 14, 16, 0.62);
+  --icon-filter: none;
+
+  --glass-fill: linear-gradient(145deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.22));
+  --glass-blur: blur(26px) saturate(170%);
+  --glass-edge-a: rgba(255, 255, 255, 0.95);
+  --glass-edge-b: rgba(255, 255, 255, 0.25);
+  --glass-shadow: 0 24px 50px rgba(30, 30, 40, 0.22), 0 6px 14px rgba(30, 30, 40, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --glass-shine: rgba(255, 255, 255, 0.5);
+
+  --inner-fill: rgba(255, 255, 255, 0.4);
+  --inner-fill-hover: rgba(255, 255, 255, 0.62);
+  --inner-edge: rgba(255, 255, 255, 0.75);
 }
 
 * {
@@ -22,6 +65,22 @@
   -webkit-user-select: none;
 }
 
+html.rotated body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--vw);
+  height: var(--vh);
+  transform-origin: 0 0;
+  transform: translateX(var(--sw)) rotate(90deg);
+  overflow: hidden;
+}
+
+img, video {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
 html, body {
   height: 100%;
   overflow: hidden;
@@ -29,14 +88,11 @@ html, body {
 
 body {
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  background-color: #060606;
+  background-color: var(--page);
+  transition: background-color 0.4s ease;
 }
 
 ::selection {
-  background: transparent;
-}
-
-::-webkit-selection {
   background: transparent;
 }
 
@@ -47,9 +103,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(6, 6, 6, 0.6);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  background: var(--gate-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   cursor: pointer;
   transition: opacity 0.8s ease, visibility 0.8s ease;
 }
@@ -61,11 +117,18 @@ body {
 }
 
 #mark {
+  color: var(--text);
   font-size: 50px;
-  color: #ffffff;
-  text-shadow: 0 0 15px var(--accent), 0 0 30px #888888;
   animation: pulse 2s infinite ease-in-out;
   transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#mark:empty {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text);
+  background: var(--inner-fill);
 }
 
 #gate:active #mark {
@@ -76,20 +139,19 @@ body {
   width: 64px;
   height: 64px;
   object-fit: contain;
-  filter: drop-shadow(0 0 15px #ffffff);
 }
 
 @keyframes pulse {
   0% {
-    opacity: 0.6;
+    opacity: 0.55;
     transform: scale(1);
   }
   50% {
     opacity: 1;
-    transform: scale(1.15);
+    transform: scale(1.12);
   }
   100% {
-    opacity: 0.6;
+    opacity: 0.55;
     transform: scale(1);
   }
 }
@@ -124,8 +186,9 @@ body {
   content: "";
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--veil);
   z-index: -1;
+  transition: background 0.4s ease;
 }
 
 #drift {
@@ -150,8 +213,10 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--inner-edge);
+  background: var(--inner-fill);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -166,8 +231,8 @@ body {
 }
 
 #sound:hover {
-  background: rgba(255, 255, 255, 0.18);
-  transform: scale(1.12);
+  background: var(--inner-fill-hover);
+  transform: scale(1.1);
 }
 
 #sound.in:active {
@@ -177,7 +242,7 @@ body {
 #sound img {
   width: 16px;
   height: 16px;
-  filter: invert(1);
+  filter: var(--icon-filter);
   transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -191,40 +256,45 @@ body {
   width: min(92%, 26rem);
   height: auto;
   padding: 30px 28px;
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--cardcorner, 28px);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55), 0 10px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--glass-shadow);
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.92) perspective(1000px) rotateX(var(--tx, 0deg)) rotateY(var(--ty, 0deg));
-  transform-style: preserve-3d;
-  transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 500ms ease;
+  transform: translate(-50%, -50%) scale(0.92);
+  transition: opacity 600ms ease;
   will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  touch-action: none;
+  cursor: grab;
 }
 
 #card.in {
-  animation: enter 650ms cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  opacity: 1;
 }
 
-#card.in:hover {
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6), 0 14px 28px rgba(0, 0, 0, 0.45);
+#card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(145deg, var(--glass-edge-a), var(--glass-edge-b) 45%, var(--glass-edge-b) 60%, var(--glass-edge-a));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
 }
 
-@keyframes enter {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.9) perspective(1000px) rotateX(var(--tx2, 0deg)) rotateY(var(--ty2, 0deg));
-  }
-  60% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.02) perspective(1000px) rotateX(var(--txm, 0deg)) rotateY(var(--tym, 0deg));
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1) perspective(1000px) rotateX(var(--tx, 0deg)) rotateY(var(--ty, 0deg));
-  }
+#card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--sx) var(--sy), var(--glass-shine), transparent 58%);
+  pointer-events: none;
 }
 
 @keyframes showhead {
@@ -238,17 +308,6 @@ body {
   }
 }
 
-@keyframes showlinks {
-  0% {
-    opacity: 0;
-    transform: translateY(14px) translateZ(24px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) translateZ(24px);
-  }
-}
-
 #card > * {
   opacity: 0;
 }
@@ -259,12 +318,12 @@ body {
 }
 
 #card.in > #buttons {
-  animation: showlinks 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: showhead 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
   animation-delay: 340ms;
 }
 
 #card.in > #links {
-  animation: showlinks 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: showhead 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
   animation-delay: 420ms;
 }
 
@@ -280,14 +339,14 @@ body {
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  border: 2px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.5);
-  transform: translateZ(38px);
+  border: 1.5px solid var(--inner-edge);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3);
+  translate: calc(var(--px) * 7px) calc(var(--py) * 7px);
   transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 #pfp:hover {
-  transform: translateZ(38px) scale(1.08) rotate(-3deg);
+  transform: scale(1.06) rotate(-3deg);
 }
 
 .pfpmedia {
@@ -299,7 +358,7 @@ body {
 
 #who {
   min-width: 0;
-  transform: translateZ(20px);
+  translate: calc(var(--px) * 4px) calc(var(--py) * 4px);
 }
 
 #handle {
@@ -309,22 +368,16 @@ body {
   font-weight: 400;
   letter-spacing: 1px;
   cursor: pointer;
-  background: linear-gradient(110deg, #ffffff 30%, var(--accent) 45%, #ffffff 60%);
-  background-size: 260% 100%;
-  background-position: 100% 0%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: sheen 3.2s ease-in-out infinite;
+  color: var(--text);
   transition: transform 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 #handle:hover {
-  transform: scale(1.06) rotate(-1.5deg);
+  transform: scale(1.05) rotate(-1.5deg);
 }
 
 #handle:active {
-  transform: scale(0.92) rotate(1deg);
+  transform: scale(0.94) rotate(1deg);
 }
 
 @keyframes bounce {
@@ -355,21 +408,9 @@ body {
   animation: bounce 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-@keyframes sheen {
-  0% {
-    background-position: 100% 0%;
-  }
-  50% {
-    background-position: -60% 0%;
-  }
-  100% {
-    background-position: -60% 0%;
-  }
-}
-
 #line {
   margin-top: 4px;
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--text-soft);
   font-family: var(--tagfont);
   font-weight: 500;
   font-size: 15px;
@@ -392,7 +433,7 @@ body {
   content: "|";
   display: inline-block;
   margin-left: 2px;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-soft);
   animation: blink 0.8s infinite;
 }
 
@@ -400,7 +441,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  transform: translateZ(22px);
+  translate: calc(var(--px) * 3px) calc(var(--py) * 3px);
 }
 
 .btn {
@@ -409,15 +450,16 @@ body {
   gap: 12px;
   padding: 12px 16px;
   border-radius: var(--btncorner, 16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--inner-edge);
+  background: var(--inner-fill);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
   text-decoration: none;
   transition: background 300ms ease, transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-3px) scale(1.02);
+  background: var(--inner-fill-hover);
+  transform: translateY(-2px) scale(1.015);
 }
 
 .btn:active {
@@ -441,13 +483,13 @@ body {
 }
 
 .btnlabel {
-  color: #ffffff;
+  color: var(--text);
   font-size: 14px;
   font-weight: 600;
 }
 
 .btndesc {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-soft);
   font-size: 12px;
   font-weight: 400;
 }
@@ -457,7 +499,7 @@ body {
   justify-content: center;
   align-items: center;
   gap: 22px;
-  transform: translateZ(24px);
+  translate: calc(var(--px) * 5px) calc(var(--py) * 5px);
 }
 
 #links a {
@@ -468,7 +510,7 @@ body {
 
 #links a:hover {
   opacity: 1;
-  transform: translateY(-4px) scale(1.12);
+  transform: translateY(-3px) scale(1.1);
 }
 
 #links a:active {
@@ -478,7 +520,7 @@ body {
 #links img, #links video {
   width: 30px;
   height: 30px;
-  filter: invert(1) drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
+  filter: var(--icon-filter);
 }
 
 .coin {
@@ -493,7 +535,7 @@ body {
 
 .coin:hover {
   opacity: 1;
-  transform: translateY(-4px) scale(1.12);
+  transform: translateY(-3px) scale(1.1);
 }
 
 .coin:active {
@@ -503,11 +545,11 @@ body {
 .coin img, .coin video {
   width: 30px;
   height: 30px;
-  filter: invert(1) drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
+  filter: var(--icon-filter);
 }
 
-.coin.copied img, .coin.copied video {
-  filter: invert(56%) sepia(84%) saturate(455%) hue-rotate(70deg) drop-shadow(0 0 8px rgba(120, 255, 120, 0.7));
+.coin.copied {
+  opacity: 1;
   animation: pop 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -516,9 +558,13 @@ body {
     transform: scale(1);
   }
   40% {
-    transform: scale(1.35);
+    transform: scale(1.3);
   }
   100% {
     transform: scale(1);
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #mark { animation: none; }
 }
