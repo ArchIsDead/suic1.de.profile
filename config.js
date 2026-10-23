@@ -5,29 +5,33 @@ const CFG = {
     "Suicide is the intentional act of ending one's own life.",
   ],
   avatar: "avatar.png",
-  gateIcon: "✙",
+  gateIcon: "",
 
   siteTitle: "suic1.de",
   siteDescription: "Suicide is the intentional act of ending one's own life.",
   thumbnail: "thumbnail.png",
   favicon: "favicon.png",
+  theme: "auto",
   themeColor: "#ffffff",
   chromeColor: "#060606",
 
-  bg: "background.jpg",
+  bg: "copiumdealer_video_no_watermark.mp4",
   cursor: "cursor.png",
   cursorHotspot: "0 0",
   font: "name-font.ttf",
   fontTag: '"Segoe UI", "Helvetica Neue", Arial, sans-serif',
   fontButtons: '"Segoe UI", "Helvetica Neue", Arial, sans-serif',
 
-  audio: "background-audio.mp3",
+  audio: "Good Looking_spotdown.org.mp3",
   playIcon: "icon-play.png",
   pauseIcon: "icon-pause.png",
 
   showProfile: true,
   showTag: true,
   showMusic: true,
+
+  forceLandscape: true,
+  rotateBelow: 1,
 
   cardCorner: "28px",
   buttonCorner: "16px",
@@ -39,8 +43,11 @@ const CFG = {
   typePauseAtStart: 500,
 
   tilt: true,
-  tiltGyro: false,
-  tiltStrength: 14,
+  tiltMode: "auto",
+  tiltStrength: 12,
+  tiltIdle: true,
+  drag: true,
+  dragReturn: true,
   tiltRestX: 6,
   tiltRestY: -8,
 
@@ -58,7 +65,6 @@ const CFG = {
   links: [
     { n: "Discord",  u: "https://discord.gg/B5JP6zRRHe",                   i: "discord.svg" },
     { n: "Telegram", u: "https://t.me/archsix",                            i: "telegram.svg" },
-    { n: "Roblox",   u: "https://www.roblox.com/users/3532024703/profile", i: "roblox.svg" },
     { n: "GitHub",   u: "https://github.com/ArchIsDead",                   i: "github.svg" },
   ],
 
