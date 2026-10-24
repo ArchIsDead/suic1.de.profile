@@ -30,7 +30,7 @@ const CFG = {
   showTag: true,
   showMusic: true,
 
-  forceLandscape: true,
+  forceLandscape: false,
   rotateBelow: 1,
 
   cardCorner: "28px",
@@ -42,7 +42,7 @@ const CFG = {
   typePauseAtEnd: 1800,
   typePauseAtStart: 500,
 
-  glassBlur: 26,
+  glassBlur: 13,
   backgroundBlur: 0,
 
   tilt: true,
