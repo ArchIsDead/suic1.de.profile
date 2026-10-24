@@ -46,11 +46,11 @@ const CFG = {
   backgroundBlur: 0,
 
   tilt: true,
-  tiltTrigger: "move",
+  tiltTrigger: "hold",
   tiltMode: "auto",
   tiltStrength: 12,
   tiltIdle: true,
-  drag: true,
+  drag: false,
   dragReturn: true,
   tiltRestX: 6,
   tiltRestY: -8,
