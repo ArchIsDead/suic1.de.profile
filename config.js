@@ -30,7 +30,7 @@ const CFG = {
   showTag: true,
   showMusic: true,
 
-  forceLandscape: false,
+  forceLandscape: true,
   rotateBelow: 1,
 
   cardCorner: "28px",
