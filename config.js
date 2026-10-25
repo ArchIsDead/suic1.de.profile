@@ -18,7 +18,7 @@ const CFG = {
   chromeColor: "#060606",             // phone browser bar color
 
   // ---------- look ----------
-  bg: "copiumdealer_video_no_watermark.mp4",   // background: image (jpg, png, gif, webp) or video (mp4, webm)
+  bg: "ssstik.io_1792942071307.mp4",   // background: image (jpg, png, gif, webp) or video (mp4, webm)
   cursor: "cursor.png",               // custom cursor image, "" for the normal cursor
   cursorHotspot: "0 0",               // click point of the cursor image, "x y" in pixels
   font: "name-font.ttf",              // font file for the name, "" for the default font
