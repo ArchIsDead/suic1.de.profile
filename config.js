@@ -1,78 +1,93 @@
 const CFG = {
 
-  name: "RFour",
-  tag: [
+  // ---------- profile ----------
+  name: "RFour",                      // big name on the card
+  tag: [                              // typed line under the name, add more lines to cycle through them
     "Suicide is the intentional act of ending one's own life.",
   ],
-  avatar: "avatar.png",
-  gateIcon: "",
+  avatar: "avatar.png",               // image or video file for the profile picture
+  gateIcon: "☄︎",                      // click-to-enter screen icon (text, image or video). Leave "" for NO gate, the page opens right away
 
-  siteTitle: "suic1.de",
-  siteDescription: "Suicide is the intentional act of ending one's own life.",
-  thumbnail: "thumbnail.png",
-  favicon: "favicon.png",
-  theme: "auto",
-  themeColor: "#ffffff",
-  chromeColor: "#060606",
+  // ---------- site info ----------
+  siteTitle: "suic1.de",              // browser tab title
+  siteDescription: "Suicide is the intentional act of ending one's own life.",   // link preview text
+  thumbnail: "thumbnail.png",         // link preview image
+  favicon: "favicon.png",             // tab icon
+  theme: "auto",                      // "auto" follows the device, or force "dark" / "light"
+  themeColor: "#ffffff",              // accent color
+  chromeColor: "#060606",             // phone browser bar color
 
-  bg: "background.jpg",
-  cursor: "cursor.png",
-  cursorHotspot: "0 0",
-  font: "name-font.ttf",
-  fontTag: '"Segoe UI", "Helvetica Neue", Arial, sans-serif',
-  fontButtons: '"Segoe UI", "Helvetica Neue", Arial, sans-serif',
+  // ---------- look ----------
+  bg: "copiumdealer_video_no_watermark.mp4",   // background: image (jpg, png, gif, webp) or video (mp4, webm)
+  cursor: "cursor.png",               // custom cursor image, "" for the normal cursor
+  cursorHotspot: "0 0",               // click point of the cursor image, "x y" in pixels
+  font: "name-font.ttf",              // font file for the name, "" for the default font
+  fontTag: '"Segoe UI", "Helvetica Neue", Arial, sans-serif',       // font of the typed line
+  fontButtons: '"Segoe UI", "Helvetica Neue", Arial, sans-serif',   // font of the buttons
 
-  audio: "background-audio.mp3",
-  playIcon: "icon-play.png",
-  pauseIcon: "icon-pause.png",
+  // ---------- music ----------
+  audio: "Good_Looking_spotdown_org.mp3",   // music file, starts on the first tap or click
+  playIcon: "icon-play.png",          // sound button icon while paused
+  pauseIcon: "icon-pause.png",        // sound button icon while playing
 
-  showProfile: true,
-  showTag: true,
-  showMusic: true,
+  // ---------- show or hide ----------
+  showProfile: true,                  // profile picture
+  showTag: true,                      // typed line
+  showMusic: true,                    // music and sound button
 
-  forceLandscape: "mobile",
-  rotateBelow: 1,
+  // ---------- screen rotation ----------
+  forceLandscape: "mobile",           // "mobile" rotates the page to wide only on phones and tablets, "always" on every device, false = off
+  rotateBelow: 1,                     // rotate when width / height is below this number (1 = portrait screens)
 
-  cardCorner: "28px",
-  buttonCorner: "16px",
+  // ---------- shapes ----------
+  cardCorner: "28px",                 // roundness of the glass card
+  buttonCorner: "16px",               // roundness of the buttons
 
-  typeText: true,
-  typeSpeed: 55,
-  typeStartDelay: 300,
-  typePauseAtEnd: 1800,
-  typePauseAtStart: 500,
+  // ---------- typing effect ----------
+  typeText: true,                     // false = show the line instantly
+  typeSpeed: 55,                      // ms per letter, lower is faster
+  typeStartDelay: 300,                // ms to wait before typing starts
+  typePauseAtEnd: 1800,               // ms to wait after a line is typed
+  typePauseAtStart: 500,              // ms to wait before the next line
 
-  glassBlur: 26,
-  backgroundBlur: 0,
+  // ---------- glass ----------
+  glassBlur: 26,                      // card frosting in px, 0 = clear glass, 10 soft, 26 default, 40+ very frosted
+  backgroundBlur: 0,                  // blur on the background in px, 0 = sharp
 
-  tilt: true,
-  tiltTrigger: "move",
-  tiltMode: "auto",
-  tiltStrength: 12,
-  tiltIdle: true,
-  drag: true,
-  dragReturn: true,
-  tiltRestX: 6,
-  tiltRestY: -8,
+  // ---------- 3D tilt ----------
+  tilt: true,                         // false = card stays flat
+  tiltTrigger: "hold",                // "move" tilts while the mouse or phone moves, "hold" tilts only while you press or touch the screen
+  tiltMode: "auto",                   // only for "move": "auto" (mouse on PC, gyro on phone), "pointer", "gyro", "off"
+  tiltStrength: 12,                   // how far the card tilts in degrees
+  tiltIdle: true,                     // slow floating sway when nothing is touched
+  tiltRestX: 6,                       // resting tilt up/down in degrees
+  tiltRestY: -8,                      // resting tilt left/right in degrees
 
-  buttonsPosition: "below",
+  // ---------- dragging ----------
+  drag: false,                        // true = the card can be dragged around
+  dragReturn: true,                   // only when drag is on: true = card springs back to the center, false = stays where you drop it
 
-  buttons: [
+  // ---------- buttons ----------
+  buttonsPosition: "below",           // "below" or "above" the social icons
+
+  buttons: [                          // big buttons on the card, add as many as you want
     {
-      label: "Visit suic1.de",
-      desc: "",
-      image: "robot.png",
-      u: "https://suic1.de",
+      label: "Visit suic1.de",        // button title
+      desc: "",                       // small text under the title, optional
+      image: "robot.png",             // button image, optional
+      u: "https://suic1.de",          // link. Use  copy: "text"  instead of u to copy text on click
     },
   ],
 
-  links: [
+  // ---------- social icons ----------
+  links: [                            // n = name on hover, u = link, i = icon file
     { n: "Discord",  u: "https://discord.gg/B5JP6zRRHe",                   i: "discord.svg" },
     { n: "Telegram", u: "https://t.me/archsix",                            i: "telegram.svg" },
     { n: "GitHub",   u: "https://github.com/ArchIsDead",                   i: "github.svg" },
   ],
 
-  copyIcons: [
+  // ---------- copy icons ----------
+  copyIcons: [                        // click the icon to copy v. n = name on hover, v = text to copy, i = icon file
     { n: "Litecoin", v: "ltc1q7kvzhdx97qfn6raav4qvfvra6k57jq6ptx8l74", i: "litecoin.svg" },
   ],
 
