@@ -21,7 +21,6 @@
   --glass-fill: linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05));
   --blur: 26px;
   --backblur: 0px;
-  --backscale: 1;
   --glass-blur: blur(var(--blur)) saturate(150%);
   --glass-edge-a: rgba(255, 255, 255, 0.55);
   --glass-edge-b: rgba(255, 255, 255, 0.06);
@@ -174,9 +173,17 @@ body {
   width: 100%;
   height: auto;
   min-height: 100%;
-  transform: translate(-50%, -50%) scale(var(--backscale));
+  transform: translate(-50%, -50%);
   object-fit: cover;
-  filter: grayscale(100%) contrast(1.05) blur(var(--backblur));
+}
+
+#back::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-backdrop-filter: grayscale(100%) contrast(1.05) blur(var(--backblur));
+  backdrop-filter: grayscale(100%) contrast(1.05) blur(var(--backblur));
 }
 
 #stage::before {
@@ -262,8 +269,6 @@ body {
   transform: translate(-50%, -50%) scale(0.92);
   transition: opacity 600ms ease;
   will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
   touch-action: none;
   cursor: grab;
 }
