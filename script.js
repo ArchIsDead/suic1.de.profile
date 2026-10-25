@@ -11,15 +11,60 @@ function video(path) {
   return VIDEOS.includes(ext(path));
 }
 
+const LIVE = [];
+
+function play(v) {
+  const r = v.play();
+  if (r && r.catch) r.catch(() => {});
+}
+
+function keepAlive(v) {
+  LIVE.push(v);
+  let last = -1;
+  let stuck = 0;
+  v.addEventListener("loadeddata", () => play(v));
+  v.addEventListener("canplay", () => { if (v.paused && !document.hidden) play(v); });
+  v.addEventListener("ended", () => { v.currentTime = 0; play(v); });
+  setInterval(() => {
+    if (document.hidden) return;
+    if (v.ended) { v.currentTime = 0; play(v); return; }
+    if (v.paused) { play(v); return; }
+    if (v.readyState >= 3 && !v.seeking && v.currentTime === last) {
+      stuck++;
+      if (stuck >= 2) {
+        stuck = 0;
+        v.currentTime = v.duration && v.currentTime >= v.duration - 0.3 ? 0 : v.currentTime + 0.01;
+        play(v);
+      }
+    } else {
+      stuck = 0;
+    }
+    last = v.currentTime;
+  }, 1000);
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) LIVE.forEach(play);
+});
+
 function media(path, cls) {
   if (video(path)) {
     const v = document.createElement("video");
-    v.src = path;
+    v.muted = true;
+    v.defaultMuted = true;
+    v.setAttribute("muted", "");
+    v.setAttribute("playsinline", "");
+    v.setAttribute("webkit-playsinline", "");
+    v.setAttribute("disableremoteplayback", "");
     v.autoplay = true;
     v.loop = true;
-    v.muted = true;
     v.playsInline = true;
+    v.controls = false;
+    v.disablePictureInPicture = true;
+    v.preload = "auto";
+    v.src = path;
     if (cls) v.className = cls;
+    keepAlive(v);
     return v;
   }
   const im = document.createElement("img");
@@ -77,6 +122,11 @@ setTheme();
 if (schemeQuery.addEventListener) schemeQuery.addEventListener("change", setTheme);
 else if (schemeQuery.addListener) schemeQuery.addListener(setTheme);
 
+const MOBILE_UA = navigator.userAgentData && typeof navigator.userAgentData.mobile === "boolean"
+  ? navigator.userAgentData.mobile
+  : /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
+const PHONE = MOBILE_UA && window.matchMedia("(pointer: coarse)").matches;
+
 let VW = window.innerWidth;
 let VH = window.innerHeight;
 let ROT = false;
@@ -84,7 +134,9 @@ let ROT = false;
 function layout() {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  ROT = !!CFG.forceLandscape && w / h < (CFG.rotateBelow || 1);
+  const mode = CFG.forceLandscape;
+  const allowed = mode === "always" || (!!mode && mode !== "off" && PHONE);
+  ROT = allowed && w / h < (CFG.rotateBelow || 1);
   VW = ROT ? h : w;
   VH = ROT ? w : h;
   const root = document.documentElement;
@@ -116,10 +168,12 @@ document.documentElement.style.setProperty("--tagfont", CFG.fontTag);
 document.documentElement.style.setProperty("--btnfont", CFG.fontButtons);
 document.documentElement.style.setProperty("--cardcorner", CFG.cardCorner);
 document.documentElement.style.setProperty("--btncorner", CFG.buttonCorner);
-document.documentElement.style.setProperty("--blur", `${Math.max(0, Number(CFG.glassBlur ?? 26))}px`);
-const bb = Math.max(0, Number(CFG.backgroundBlur || 0));
-document.documentElement.style.setProperty("--backblur", `${bb}px`);
-document.documentElement.style.setProperty("--backscale", String(1 + bb * 0.006));
+function amount(v, d) {
+  const n = parseFloat(v);
+  return Number.isFinite(n) ? Math.min(200, Math.max(0, n)) : d;
+}
+document.documentElement.style.setProperty("--blur", `${amount(CFG.glassBlur, 26)}px`);
+document.documentElement.style.setProperty("--backblur", `${amount(CFG.backgroundBlur, 0)}px`);
 
 if (!CFG.buttons || CFG.buttons.length === 0) {
   bt.remove();
@@ -680,6 +734,11 @@ function backdrop() {
   window.addEventListener("resize", size);
   requestAnimationFrame(frame);
 })();
+
+onGesture(() => {
+  LIVE.forEach(v => { if (v.paused) play(v); });
+  return LIVE.every(v => !v.paused);
+});
 
 if (CFG.gateIcon) {
   gt.addEventListener("click", enter);
