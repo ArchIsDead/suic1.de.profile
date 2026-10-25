@@ -26,7 +26,7 @@ const CFG = {
   fontButtons: '"Segoe UI", "Helvetica Neue", Arial, sans-serif',   // font of the buttons
 
   // ---------- music ----------
-  audio: "Good_Looking_spotdown_org.mp3",   // music file, starts on the first tap or click
+  audio: "Good Looking_spotdown.org.mp3",   // music file, starts on the first tap or click
   playIcon: "icon-play.png",          // sound button icon while paused
   pauseIcon: "icon-pause.png",        // sound button icon while playing
 
@@ -36,7 +36,7 @@ const CFG = {
   showMusic: true,                    // music and sound button
 
   // ---------- screen rotation ----------
-  forceLandscape: "mobile",           // "mobile" rotates the page to wide only on phones and tablets, "always" on every device, false = off
+  forceLandscape: false,           // "mobile" rotates the page to wide only on phones and tablets, "always" on every device, false = off
   rotateBelow: 1,                     // rotate when width / height is below this number (1 = portrait screens)
 
   // ---------- shapes ----------
