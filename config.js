@@ -15,14 +15,14 @@ const CFG = {
   themeColor: "#ffffff",
   chromeColor: "#060606",
 
-  bg: "copiumdealer_video_no_watermark.mp4",
+  bg: "background.jpg",
   cursor: "cursor.png",
   cursorHotspot: "0 0",
   font: "name-font.ttf",
   fontTag: '"Segoe UI", "Helvetica Neue", Arial, sans-serif',
   fontButtons: '"Segoe UI", "Helvetica Neue", Arial, sans-serif',
 
-  audio: "Good Looking_spotdown.org.mp3",
+  audio: "background-audio.mp3",
   playIcon: "icon-play.png",
   pauseIcon: "icon-pause.png",
 
@@ -30,7 +30,7 @@ const CFG = {
   showTag: true,
   showMusic: true,
 
-  forceLandscape: true,
+  forceLandscape: "mobile",
   rotateBelow: 1,
 
   cardCorner: "28px",
@@ -42,15 +42,15 @@ const CFG = {
   typePauseAtEnd: 1800,
   typePauseAtStart: 500,
 
-  glassBlur: 13,
+  glassBlur: 26,
   backgroundBlur: 0,
 
   tilt: true,
-  tiltTrigger: "hold",
+  tiltTrigger: "move",
   tiltMode: "auto",
   tiltStrength: 12,
   tiltIdle: true,
-  drag: false,
+  drag: true,
   dragReturn: true,
   tiltRestX: 6,
   tiltRestY: -8,
