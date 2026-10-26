@@ -168,12 +168,19 @@ document.documentElement.style.setProperty("--tagfont", CFG.fontTag);
 document.documentElement.style.setProperty("--btnfont", CFG.fontButtons);
 document.documentElement.style.setProperty("--cardcorner", CFG.cardCorner);
 document.documentElement.style.setProperty("--btncorner", CFG.buttonCorner);
-function amount(v, d) {
+function num(v, d, lo, hi) {
   const n = parseFloat(v);
-  return Number.isFinite(n) ? Math.min(200, Math.max(0, n)) : d;
+  return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d;
 }
-document.documentElement.style.setProperty("--blur", `${amount(CFG.glassBlur, 26)}px`);
-document.documentElement.style.setProperty("--backblur", `${amount(CFG.backgroundBlur, 0)}px`);
+const rootStyle = document.documentElement.style;
+rootStyle.setProperty("--blur", `${num(CFG.glassBlur, 26, 0, 200)}px`);
+rootStyle.setProperty("--backblur", `${num(CFG.backgroundBlur, 0, 0, 200)}px`);
+rootStyle.setProperty("--dim", String(num(CFG.bgDim, 0.45, 0, 1)));
+rootStyle.setProperty("--backgray", CFG.bgGrayscale === false ? "0%" : "100%");
+rootStyle.setProperty("--tint", String(num(CFG.glassTint, 1, 0, 2)));
+rootStyle.setProperty("--par", String(num(CFG.parallax, 1, 0, 3)));
+if (CFG.cardWidth) rootStyle.setProperty("--cardw", typeof CFG.cardWidth === "number" ? `${CFG.cardWidth}px` : String(CFG.cardWidth));
+if (CFG.glassShine === false) document.documentElement.setAttribute("data-noshine", "");
 
 if (!CFG.buttons || CFG.buttons.length === 0) {
   bt.remove();
@@ -185,6 +192,7 @@ if (!CFG.buttons || CFG.buttons.length === 0) {
 
 if (CFG.showMusic) {
   tk.src = CFG.audio;
+  tk.loop = CFG.audioLoop !== false;
   si.src = CFG.playIcon;
 } else {
   sb.remove();
@@ -352,7 +360,7 @@ function enter() {
   entered = true;
   gt.classList.add("gone");
   if (CFG.showMusic) {
-    tk.volume = 0.6;
+    tk.volume = num(CFG.audioVolume, 0.6, 0, 1);
     tk.play().catch(() => {});
     sb.classList.add("in");
   }
@@ -420,9 +428,13 @@ const MODE = !CFG.tilt || CFG.tiltMode === "off" ? "off"
   : TRIGGER === "hold" ? "hold"
   : (CFG.tiltMode === "pointer" || CFG.tiltMode === "gyro") ? CFG.tiltMode
   : (coarse ? "gyro" : "pointer");
-const SPAN = CFG.tiltStrength || 12;
-const BASEX = MODE === "off" ? 0 : CFG.tiltRestX;
-const BASEY = MODE === "off" ? 0 : CFG.tiltRestY;
+const SPAN = num(CFG.tiltStrength, 12, 0, 60);
+const SPANDIV = SPAN || 1;
+const BASEX = MODE === "off" ? 0 : num(CFG.tiltRestX, 6, -60, 60);
+const BASEY = MODE === "off" ? 0 : num(CFG.tiltRestY, -8, -60, 60);
+const PERSP = num(CFG.tiltPerspective, 1100, 300, 5000);
+const TSPEED = num(CFG.tiltSpeed, 9, 1, 40);
+const DIR = CFG.tiltInvert ? -1 : 1;
 
 const m = { x: 0, y: 0, vx: 0, vy: 0, rx: BASEX, ry: BASEY, s: 0.92, ix: 0, iy: 0, idle: 1 };
 let lastMove = -1e9;
@@ -600,9 +612,9 @@ function tick(now) {
     const dragX = MODE === "off" ? 0 : clamp(-m.vy * 0.012, -16, 16);
     const dragY = MODE === "off" ? 0 : clamp(m.vx * 0.012, -16, 16);
 
-    const tx = BASEX - m.ix * SPAN + swayX + dragX;
-    const ty = BASEY + m.iy * SPAN + swayY + dragY;
-    const ease = 1 - Math.exp(-dt * 9);
+    const tx = BASEX - DIR * m.ix * SPAN + swayX + dragX;
+    const ty = BASEY + DIR * m.iy * SPAN + swayY + dragY;
+    const ease = 1 - Math.exp(-dt * TSPEED);
     m.rx += (tx - m.rx) * ease;
     m.ry += (ty - m.ry) * ease;
 
@@ -612,10 +624,10 @@ function tick(now) {
 
     cd.style.transform =
       `translate3d(${m.x.toFixed(2)}px, ${m.y.toFixed(2)}px, 0) translate(-50%, -50%) ` +
-      `perspective(1100px) rotateX(${m.rx.toFixed(3)}deg) rotateY(${m.ry.toFixed(3)}deg) scale(${m.s.toFixed(4)})`;
+      `perspective(${PERSP}px) rotateX(${m.rx.toFixed(3)}deg) rotateY(${m.ry.toFixed(3)}deg) scale(${m.s.toFixed(4)})`;
 
-    const nx = clamp((m.ry - BASEY) / SPAN, -1.5, 1.5);
-    const ny = clamp(-(m.rx - BASEX) / SPAN, -1.5, 1.5);
+    const nx = clamp((m.ry - BASEY) / SPANDIV, -1.5, 1.5);
+    const ny = clamp(-(m.rx - BASEX) / SPANDIV, -1.5, 1.5);
     cd.style.setProperty("--px", nx.toFixed(3));
     cd.style.setProperty("--py", ny.toFixed(3));
     cd.style.setProperty("--sx", `${(50 + nx * 22).toFixed(2)}%`);
@@ -629,14 +641,19 @@ requestAnimationFrame(tick);
 
 function backdrop() {
   const c = document.getElementById("drift");
+  if (CFG.particles === false) {
+    c.remove();
+    return;
+  }
   const ctx = c.getContext("2d");
+  const COUNT = Math.round(num(CFG.particleCount, 70, 0, 400));
   let dots = [];
   let mx = VW / 2;
   document.addEventListener("mousemove", e => { mx = pt(e).x; });
 
   function size() { c.width = VW; c.height = VH; }
   function seed() {
-    dots = Array.from({ length: 70 }, () => ({
+    dots = Array.from({ length: COUNT }, () => ({
       x: Math.random() * c.width,
       y: Math.random() * c.height * 1.5 - c.height * 0.5,
       r: 1 + Math.random() * 1.8,
@@ -673,6 +690,10 @@ function backdrop() {
 
 (function sparks() {
   const c = document.getElementById("trail");
+  if (CFG.sparks === false) {
+    c.remove();
+    return;
+  }
   const ctx = c.getContext("2d");
   let bits = [];
   let mx = -999, my = -999, px = -999, py = -999;
