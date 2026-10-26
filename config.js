@@ -19,6 +19,8 @@ const CFG = {
 
   // ---------- look ----------
   bg: "ssstik.io_1792942071307.mp4",   // background: image (jpg, png, gif, webp) or video (mp4, webm)
+  bgDim: 0.45,                        // darkness over the background, 0 = none, 1 = fully covered (white veil in the light theme)
+  bgGrayscale: true,                  // true = black and white background, false = original colors
   cursor: "cursor.png",               // custom cursor image, "" for the normal cursor
   cursorHotspot: "0 0",               // click point of the cursor image, "x y" in pixels
   font: "name-font.ttf",              // font file for the name, "" for the default font
@@ -27,6 +29,8 @@ const CFG = {
 
   // ---------- music ----------
   audio: "Good Looking_spotdown.org.mp3",   // music file, starts on the first tap or click
+  audioVolume: 0.6,                   // 0 = silent, 1 = full volume
+  audioLoop: true,                    // false = the song plays once and stops
   playIcon: "icon-play.png",          // sound button icon while paused
   pauseIcon: "icon-pause.png",        // sound button icon while playing
 
@@ -35,11 +39,17 @@ const CFG = {
   showTag: true,                      // typed line
   showMusic: true,                    // music and sound button
 
+  // ---------- effects ----------
+  particles: true,                    // falling dots in the background
+  particleCount: 70,                  // how many dots
+  sparks: true,                       // star trail behind the mouse
+
   // ---------- screen rotation ----------
   forceLandscape: false,           // "mobile" rotates the page to wide only on phones and tablets, "always" on every device, false = off
   rotateBelow: 1,                     // rotate when width / height is below this number (1 = portrait screens)
 
   // ---------- shapes ----------
+  cardWidth: "26rem",                 // max width of the card, like "22rem" or "420px"
   cardCorner: "28px",                 // roundness of the glass card
   buttonCorner: "16px",               // roundness of the buttons
 
@@ -52,16 +62,22 @@ const CFG = {
 
   // ---------- glass ----------
   glassBlur: 26,                      // card frosting in px, 0 = clear glass, 10 soft, 26 default, 40+ very frosted
+  glassTint: 1,                       // how white the glass is, 0 = almost invisible, 1 = default, 2 = milky
+  glassShine: true,                   // soft highlight that follows the tilt
   backgroundBlur: 0,                  // blur on the background in px, 0 = sharp
 
   // ---------- 3D tilt ----------
   tilt: true,                         // false = card stays flat
   tiltTrigger: "hold",                // "move" tilts while the mouse or phone moves, "hold" tilts only while you press or touch the screen
   tiltMode: "auto",                   // only for "move": "auto" (mouse on PC, gyro on phone), "pointer", "gyro", "off"
-  tiltStrength: 12,                   // how far the card tilts in degrees
+  tiltStrength: 12,                   // how far the card tilts in degrees, 0 = no reaction
+  tiltSpeed: 9,                       // how fast the card follows, lower = slower and floatier, higher = snappier
+  tiltPerspective: 1100,              // 3D depth in px, lower = stronger 3D, higher = flatter
+  tiltInvert: false,                  // true = tilts the opposite way
   tiltIdle: true,                     // slow floating sway when nothing is touched
   tiltRestX: 6,                       // resting tilt up/down in degrees
   tiltRestY: -8,                      // resting tilt left/right in degrees
+  parallax: 1,                        // how much the content shifts for depth while tilting, 0 = off
 
   // ---------- dragging ----------
   drag: false,                        // true = the card can be dragged around
