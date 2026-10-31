@@ -27,7 +27,7 @@ const CFG = {
   allowedHosts: [],
 
   theme: "auto",
-  accent: "#4f7cff",
+  accent: "#B2BEB5",
   chromeColor: "#060606",
 
   bg: "ssstik.io_1792942071307.mp4",
