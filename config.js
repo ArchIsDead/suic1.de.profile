@@ -1,110 +1,114 @@
 const CFG = {
 
-  // ---------- profile ----------
-  name: "RFour",                      // big name on the card
-  tag: [                              // typed line under the name, add more lines to cycle through them
-    "Suicide is the intentional act of ending one's own life.",
+  name: "4ndra",
+  tag: [
+    "IBlameMyself",
   ],
-  avatar: "avatar.png",               // image or video file for the profile picture
-  gateIcon: "☄︎",                      // click-to-enter screen icon (text, image or video). Leave "" for NO gate, the page opens right away
+  avatar: "avatar.png",
+  avatarCorner: "30%",
+  gateIcon: "☄︎",
+  gateSpin: true,
 
-  // ---------- site info ----------
-  siteTitle: "suic1.de",              // browser tab title
-  siteDescription: "Suicide is the intentional act of ending one's own life.",   // link preview text
-  thumbnail: "thumbnail.png",         // link preview image
-  favicon: "favicon.png",             // tab icon
-  theme: "auto",                      // "auto" follows the device, or force "dark" / "light"
-  themeColor: "#ffffff",              // accent color
-  chromeColor: "#060606",             // phone browser bar color
+  aboutTitle: "about me",
+  aboutText: "Hi, I'm 4ndra. Some people call me arch. I'm from Indonesia and I'm a student. I work as a Roblox game tester for Sahabat Productions. I'm into cute things, and I'm also a developer who makes things. I play Roblox the most, and I play Minecraft too. I'm still learning and I'm not great at anything. My dream is to have a stable job. I'm a bit sensitive, so please be kind to me.",
+  aboutPosition: "below",
 
-  // ---------- look ----------
-  bg: "ssstik.io_1792942071307.mp4",   // background: image (jpg, png, gif, webp) or video (mp4, webm)
-  bgDim: 0.45,                        // darkness over the background, 0 = none, 1 = fully covered (white veil in the light theme)
-  bgGrayscale: true,                  // true = black and white background, false = original colors
-  cursor: "cursor.png",               // custom cursor image, "" for the normal cursor
-  cursorHotspot: "0 0",               // click point of the cursor image, "x y" in pixels
-  font: "name-font.ttf",              // font file for the name, "" for the default font
-  fontTag: '"Segoe UI", "Helvetica Neue", Arial, sans-serif',       // font of the typed line
-  fontButtons: '"Segoe UI", "Helvetica Neue", Arial, sans-serif',   // font of the buttons
+  siteUrl: "https://4ndra.com",
+  siteTitle: "4ndra",
+  siteDescription: "IBlameMyself",
+  thumbnail: "og-image.png",
+  favicon: "avatar.png",
+  analyticsId: "G-QFRYX9FPTJ",
+  sitemapPages: ["/"],
+  personAliases: ["arch"],
+  personJob: "Roblox game tester",
+  personWorksFor: "Sahabat Productions",
+  personCountry: "ID",
+  allowedHosts: [],
 
-  // ---------- music ----------
-  audio: "Good Looking_spotdown.org.mp3",   // music file, starts on the first tap or click
-  audioVolume: 0.6,                   // 0 = silent, 1 = full volume
-  audioLoop: true,                    // false = the song plays once and stops
-  playIcon: "icon-play.png",          // sound button icon while paused
-  pauseIcon: "icon-pause.png",        // sound button icon while playing
+  theme: "auto",
+  accent: "#4f7cff",
+  chromeColor: "#060606",
 
-  // ---------- show or hide ----------
-  showProfile: true,                  // profile picture
-  showTag: true,                      // typed line
-  showMusic: true,                    // music and sound button
+  bg: "ssstik.io_1792942071307.mp4",
+  bgDim: 0.45,
+  bgGrayscale: true,
+  cursor: "cursor.png",
+  cursorHotspot: "0 0",
+  font: "Daydream.otf",
+  fontText: "PressStart2P.ttf",
 
-  // ---------- effects ----------
-  particles: true,                    // falling dots in the background
-  particleCount: 70,                  // how many dots
-  sparks: true,                       // star trail behind the mouse
+  audio: "Good Looking_spotdown.org.mp3",
+  audioVolume: 0.6,
+  audioLoop: true,
+  playIcon: "icon-play.png",
+  pauseIcon: "icon-pause.png",
 
-  // ---------- screen rotation ----------
-  forceLandscape: false,           // "mobile" rotates the page to wide only on phones and tablets, "always" on every device, false = off
-  rotateBelow: 1,                     // rotate when width / height is below this number (1 = portrait screens)
+  showProfile: true,
+  showTag: true,
+  showMusic: true,
+  musicToggle: true,
 
-  // ---------- shapes ----------
-  cardWidth: "26rem",                 // max width of the card, like "22rem" or "420px"
-  cardCorner: "28px",                 // roundness of the glass card
-  buttonCorner: "16px",               // roundness of the buttons
+  particles: true,
+  particleType: "dot",
+  particleText: "0 1",
+  particleImage: "avatar.png",
+  particleColor: "auto",
+  particleSize: 8,
+  particleSpeed: 1,
+  particleCount: 70,
+  sparks: true,
 
-  // ---------- typing effect ----------
-  typeText: true,                     // false = show the line instantly
-  typeSpeed: 55,                      // ms per letter, lower is faster
-  typeStartDelay: 300,                // ms to wait before typing starts
-  typePauseAtEnd: 1800,               // ms to wait after a line is typed
-  typePauseAtStart: 500,              // ms to wait before the next line
+  forceLandscape: false,
+  rotateBelow: 1,
 
-  // ---------- glass ----------
-  glassBlur: 26,                      // card frosting in px, 0 = clear glass, 10 soft, 26 default, 40+ very frosted
-  glassTint: 1,                       // how white the glass is, 0 = almost invisible, 1 = default, 2 = milky
-  glassShine: true,                   // soft highlight that follows the tilt
-  backgroundBlur: 0,                  // blur on the background in px, 0 = sharp
+  cardWidth: "26rem",
+  cardCorner: "10px",
+  buttonCorner: "6px",
 
-  // ---------- 3D tilt ----------
-  tilt: true,                         // false = card stays flat
-  tiltTrigger: "hold",                // "move" tilts while the mouse or phone moves, "hold" tilts only while you press or touch the screen
-  tiltMode: "auto",                   // only for "move": "auto" (mouse on PC, gyro on phone), "pointer", "gyro", "off"
-  tiltStrength: 12,                   // how far the card tilts in degrees, 0 = no reaction
-  tiltSpeed: 9,                       // how fast the card follows, lower = slower and floatier, higher = snappier
-  tiltPerspective: 1100,              // 3D depth in px, lower = stronger 3D, higher = flatter
-  tiltInvert: false,                  // true = tilts the opposite way
-  tiltIdle: true,                     // slow floating sway when nothing is touched
-  tiltRestX: 6,                       // resting tilt up/down in degrees
-  tiltRestY: -8,                      // resting tilt left/right in degrees
-  parallax: 1,                        // how much the content shifts for depth while tilting, 0 = off
+  typeText: true,
+  typeSpeed: 70,
+  typeStartDelay: 300,
+  typePauseAtEnd: 1800,
+  typePauseAtStart: 500,
 
-  // ---------- dragging ----------
-  drag: false,                        // true = the card can be dragged around
-  dragReturn: true,                   // only when drag is on: true = card springs back to the center, false = stays where you drop it
+  glassBlur: 26,
+  glassTint: 1,
+  glassShine: false,
+  backgroundBlur: 0,
 
-  // ---------- buttons ----------
-  buttonsPosition: "below",           // "below" or "above" the social icons
+  tilt: false,
+  tiltTrigger: "hold",
+  tiltMode: "auto",
+  tiltStrength: 12,
+  tiltSpeed: 9,
+  tiltPerspective: 1100,
+  tiltInvert: false,
+  tiltIdle: true,
+  tiltRestX: 6,
+  tiltRestY: -8,
+  parallax: 1,
 
-  buttons: [                          // big buttons on the card, add as many as you want
-    {
-      label: "Visit suic1.de",        // button title
-      desc: "",                       // small text under the title, optional
-      image: "robot.png",             // button image, optional
-      u: "https://suic1.de",          // link. Use  copy: "text"  instead of u to copy text on click
-    },
-  ],
+  drag: false,
+  dragReturn: true,
 
-  // ---------- social icons ----------
-  links: [                            // n = name on hover, u = link, i = icon file
+  buttonsPosition: "below",
+
+  buttons: [],
+
+  links: [
     { n: "Discord",  u: "https://discord.gg/B5JP6zRRHe",                   i: "discord.svg" },
     { n: "Telegram", u: "https://t.me/archsix",                            i: "telegram.svg" },
     { n: "GitHub",   u: "https://github.com/ArchIsDead",                   i: "github.svg" },
   ],
 
-  // ---------- copy icons ----------
-  copyIcons: [                        // click the icon to copy v. n = name on hover, v = text to copy, i = icon file
+  copyIcons: [
     { n: "Litecoin", v: "ltc1q7kvzhdx97qfn6raav4qvfvra6k57jq6ptx8l74", i: "litecoin.svg" },
   ],
+
+  notFoundTitle: "404",
+  notFoundText: "this page doesn't exist",
+  notFoundButton: "back home",
+  notFoundLink: "/",
 
 };
