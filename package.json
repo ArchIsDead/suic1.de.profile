@@ -2,6 +2,10 @@
   "name": "4ndra-profile",
   "private": true,
   "scripts": {
-    "build": "node build.js"
+    "build": "node build.js",
+    "deploy": "node build.js && npx wrangler deploy"
+  },
+  "optionalDependencies": {
+    "sharp": "^0.34.5"
   }
 }

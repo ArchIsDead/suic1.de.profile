@@ -1,7 +1,8 @@
 :root {
-  --accent: #4f7cff;
+  --accent: #ffffff;
   --accent-bright: color-mix(in srgb, var(--accent) 62%, #fff);
-  --accent-deep: color-mix(in srgb, var(--accent) 52%, #000);
+  --accent-mid: color-mix(in srgb, var(--accent) 55%, #000);
+  --accent-deep: color-mix(in srgb, var(--accent) 30%, #000);
 
   --font-name: "Name Font", "Press Start 2P", monospace;
   --font-text: "Text Font", "Press Start 2P", monospace;
@@ -22,26 +23,28 @@
   --sx: 50%;
   --sy: 50%;
 
-  --text: #f2f5ff;
-  --text-soft: rgba(242, 245, 255, 0.72);
+  --text: #f4f4f4;
+  --text-soft: rgba(244, 244, 244, 0.72);
   --line: var(--accent-bright);
   --line-dim: color-mix(in srgb, var(--accent) 48%, transparent);
   --icon-filter: invert(1);
   --veil: rgba(0, 0, 0, var(--dim));
-  --gate-bg: rgba(6, 7, 14, 0.5);
-  --glass-fill: rgba(8, 10, 20, calc(0.5 * var(--tint)));
-  --glass-solid: rgba(8, 10, 20, 0.88);
+  --gate-bg: rgba(0, 0, 0, 0.55);
+  --glass-fill: rgba(30, 30, 33, calc(0.66 * var(--tint)));
+  --glass-solid: rgba(30, 30, 33, 0.92);
   --glass-blur: blur(var(--blur)) saturate(140%);
   --glass-shine: rgba(255, 255, 255, 0.12);
-  --inner-fill: rgba(255, 255, 255, 0.06);
-  --inner-fill-hover: rgba(255, 255, 255, 0.13);
+  --inner-fill: rgba(255, 255, 255, 0.07);
+  --inner-fill-hover: rgba(255, 255, 255, 0.14);
   --page: #060606;
 }
 
 :root[data-theme="light"] {
-  --accent-bright: color-mix(in srgb, var(--accent) 86%, #000);
-  --text: #0b0d18;
-  --text-soft: rgba(11, 13, 24, 0.72);
+  --accent-bright: color-mix(in srgb, var(--accent) 48%, #000);
+  --accent-mid: color-mix(in srgb, var(--accent) 70%, #000);
+  --accent-deep: color-mix(in srgb, var(--accent) 55%, #000);
+  --text: #0a0a0a;
+  --text-soft: rgba(10, 10, 10, 0.72);
   --icon-filter: none;
   --veil: rgba(255, 255, 255, calc(var(--dim) * 0.62));
   --gate-bg: rgba(255, 255, 255, 0.45);
@@ -64,6 +67,7 @@
 }
 
 img, video {
+  pointer-events: none;
   -webkit-user-drag: none;
   user-drag: none;
 }
@@ -82,8 +86,8 @@ body {
 }
 
 ::selection {
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-bright);
+  color: var(--page);
 }
 
 a:focus-visible,
@@ -102,8 +106,6 @@ html.rotated body {
   transform: translateX(var(--sw)) rotate(90deg);
   overflow: hidden;
 }
-
-/* ---------- gate ---------- */
 
 #gate {
   position: fixed;
@@ -145,8 +147,6 @@ html.rotated body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-
-/* ---------- background ---------- */
 
 #stage {
   position: fixed;
@@ -202,8 +202,6 @@ html.rotated body {
   pointer-events: none;
 }
 
-/* ---------- sound button ---------- */
-
 #sound {
   position: fixed;
   top: 16px;
@@ -242,8 +240,6 @@ html.rotated body {
   height: 16px;
   filter: var(--icon-filter);
 }
-
-/* ---------- card ---------- */
 
 #card {
   position: absolute;
@@ -343,7 +339,7 @@ html:not([data-noshine]) #card::after {
   font: 400 32px/1 var(--font-name);
   letter-spacing: 2px;
   color: var(--text);
-  text-shadow: 2px 2px 0 var(--accent);
+  text-shadow: 2px 2px 0 var(--accent-mid);
   transform-origin: 50% 100%;
   cursor: pointer;
 }
@@ -353,16 +349,16 @@ html:not([data-noshine]) #card::after {
 }
 
 @keyframes hop {
-  0%   { transform: translateY(0);    text-shadow: 2px 2px 0 var(--accent); }
-  10%  { transform: translateY(-6px); text-shadow: 2px 8px 0 var(--accent); }
-  22%  { transform: translateY(-14px); text-shadow: 2px 16px 0 var(--accent); }
-  34%  { transform: translateY(-18px); text-shadow: 2px 20px 0 var(--accent); }
-  46%  { transform: translateY(-14px); text-shadow: 2px 16px 0 var(--accent); }
-  58%  { transform: translateY(-6px); text-shadow: 2px 8px 0 var(--accent); }
-  70%  { transform: translateY(0) scale(1.08, 0.86); text-shadow: 4px 2px 0 var(--accent); }
-  82%  { transform: translateY(-3px); text-shadow: 2px 5px 0 var(--accent); }
-  92%  { transform: translateY(0); text-shadow: 2px 2px 0 var(--accent); }
-  100% { transform: translateY(0); text-shadow: 2px 2px 0 var(--accent); }
+  0%   { transform: translateY(0);    text-shadow: 2px 2px 0 var(--accent-mid); }
+  10%  { transform: translateY(-6px); text-shadow: 2px 8px 0 var(--accent-mid); }
+  22%  { transform: translateY(-14px); text-shadow: 2px 16px 0 var(--accent-mid); }
+  34%  { transform: translateY(-18px); text-shadow: 2px 20px 0 var(--accent-mid); }
+  46%  { transform: translateY(-14px); text-shadow: 2px 16px 0 var(--accent-mid); }
+  58%  { transform: translateY(-6px); text-shadow: 2px 8px 0 var(--accent-mid); }
+  70%  { transform: translateY(0) scale(1.08, 0.86); text-shadow: 4px 2px 0 var(--accent-mid); }
+  82%  { transform: translateY(-3px); text-shadow: 2px 5px 0 var(--accent-mid); }
+  92%  { transform: translateY(0); text-shadow: 2px 2px 0 var(--accent-mid); }
+  100% { transform: translateY(0); text-shadow: 2px 2px 0 var(--accent-mid); }
 }
 
 #line {
@@ -378,7 +374,7 @@ html:not([data-noshine]) #card::after {
   height: 10px;
   margin-left: 4px;
   vertical-align: -1px;
-  background: var(--accent);
+  background: var(--accent-bright);
   animation: blink 1s steps(1) infinite;
 }
 
@@ -386,19 +382,15 @@ html:not([data-noshine]) #card::after {
   50% { opacity: 0; }
 }
 
-/* ---------- about ---------- */
-
 #about {
   flex: 0 1 auto;
   min-height: 0;
-  padding: 12px;
+  padding: 2px 6px 2px 14px;
   overflow-y: auto;
   touch-action: pan-x pan-y;
-  border: 2px solid var(--line-dim);
-  border-radius: 4px;
-  background: var(--inner-fill);
+  border-left: 4px solid var(--line-dim);
   scrollbar-width: thin;
-  scrollbar-color: var(--accent) transparent;
+  scrollbar-color: var(--accent-bright) transparent;
 }
 
 #about-title {
@@ -419,8 +411,6 @@ html:not([data-noshine]) #card::after {
   white-space: pre-line;
   overflow-wrap: anywhere;
 }
-
-/* ---------- buttons ---------- */
 
 #buttons {
   display: flex;
@@ -486,12 +476,10 @@ html:not([data-noshine]) #card::after {
   translate: 0 -50%;
   padding: 4px 6px;
   border-radius: 3px;
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-bright);
+  color: var(--page);
   font-size: 8px;
 }
-
-/* ---------- icons ---------- */
 
 #links {
   display: flex;
@@ -536,14 +524,38 @@ html:not([data-noshine]) #card::after {
   translate: -50% 0;
   padding: 4px 6px;
   border-radius: 3px;
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-bright);
+  color: var(--page);
   font: 8px/1 var(--font-text);
   white-space: nowrap;
   pointer-events: none;
 }
 
-/* ---------- not found ---------- */
+.coin[data-copied] img {
+  animation: coin-hop 420ms step-end;
+}
+
+.coin[data-copied]::after,
+.btn[data-copied]::after {
+  animation: tip 1000ms step-end both;
+}
+
+@keyframes coin-hop {
+  0% { transform: translateY(0); }
+  20% { transform: translateY(-8px); }
+  40% { transform: translateY(-12px); }
+  60% { transform: translateY(-8px); }
+  80% { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes tip {
+  0% { opacity: 0; transform: translateY(8px); }
+  10% { opacity: 1; transform: translateY(4px); }
+  20% { opacity: 1; transform: none; }
+  85% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: none; }
+}
 
 #lost {
   display: flex;
@@ -558,7 +570,7 @@ html:not([data-noshine]) #card::after {
   font: 400 72px/1 var(--font-name);
   letter-spacing: 4px;
   color: var(--text);
-  text-shadow: 4px 4px 0 var(--accent);
+  text-shadow: 4px 4px 0 var(--accent-mid);
 }
 
 #lost-text {
@@ -573,10 +585,9 @@ html:not([data-noshine]) #card::after {
 @media (prefers-reduced-motion: reduce) {
   #mark[data-spin],
   #line::after,
-  #card.in > * {
-    animation: none;
-  }
-  #handle.hop {
+  #card.in > *,
+  #handle.hop,
+  .coin[data-copied] img {
     animation: none;
   }
 }

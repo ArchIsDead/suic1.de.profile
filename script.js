@@ -3,10 +3,6 @@
 const $ = id => document.getElementById(id);
 const root = document.documentElement;
 
-/* ============================================================
-   helpers
-   ============================================================ */
-
 function num(value, fallback, min, max) {
   const n = parseFloat(value);
   return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
@@ -27,10 +23,6 @@ function isVideo(path) {
 function absolute(path) {
   try { return new URL(path, document.baseURI).href; } catch (e) { return path; }
 }
-
-/* ============================================================
-   media (images and videos that never get stuck)
-   ============================================================ */
 
 const liveVideos = [];
 
@@ -91,6 +83,7 @@ function media(path, className) {
   const image = document.createElement("img");
   image.src = path;
   image.alt = "";
+  image.draggable = false;
   if (className) image.className = className;
   return image;
 }
@@ -117,9 +110,20 @@ function onGesture(task) {
 }
 
 function flash(el) {
-  el.setAttribute("data-copied", "");
   clearTimeout(el.flashTimer);
-  el.flashTimer = setTimeout(() => el.removeAttribute("data-copied"), 900);
+  el.removeAttribute("data-copied");
+  void el.offsetWidth;
+  el.setAttribute("data-copied", "");
+  el.flashTimer = setTimeout(() => el.removeAttribute("data-copied"), 1100);
+}
+
+function lockContent() {
+  ["contextmenu", "dragstart", "selectstart"].forEach(name => {
+    document.addEventListener(name, event => {
+      if (event.target && event.target.tagName === "TEXTAREA") return;
+      event.preventDefault();
+    });
+  });
 }
 
 function copyText(text, el) {
@@ -142,10 +146,6 @@ function copyText(text, el) {
   }
 }
 
-/* ============================================================
-   page type: profile or not found
-   ============================================================ */
-
 const SITE_HOST = (() => {
   try { return new URL(CFG.siteUrl).hostname.toLowerCase(); } catch (e) { return ""; }
 })();
@@ -164,14 +164,10 @@ const NOT_FOUND = document.body.getAttribute("data-view") === "notfound" || WRON
 
 if (NOT_FOUND) root.setAttribute("data-view", "notfound");
 
-/* ============================================================
-   config to css variables, fonts and fallback metadata
-   ============================================================ */
-
 (function applyConfig() {
   const set = (name, value) => root.style.setProperty(name, value);
 
-  set("--accent", CFG.accent || "#4f7cff");
+  set("--accent", CFG.accent || "#ffffff");
   set("--blur", `${num(CFG.glassBlur, 26, 0, 200)}px`);
   set("--backblur", `${num(CFG.backgroundBlur, 0, 0, 200)}px`);
   set("--dim", String(num(CFG.bgDim, 0.45, 0, 1)));
@@ -245,13 +241,9 @@ if (NOT_FOUND) root.setAttribute("data-view", "notfound");
   }
 })();
 
-/* ============================================================
-   theme (auto follows the device)
-   ============================================================ */
-
 const PALETTE = {
-  dark: { particle: "#c8c8c8", sparks: ["#ffffff", CFG.accent || "#4f7cff"] },
-  light: { particle: "#4a4a4a", sparks: ["#111111", CFG.accent || "#4f7cff"] },
+  dark: { particle: "#c8c8c8", sparks: ["#ffffff", CFG.accent || "#ffffff"] },
+  light: { particle: "#4a4a4a", sparks: ["#111111", "#555555"] },
 };
 
 const schemeQuery = window.matchMedia("(prefers-color-scheme: light)");
@@ -266,10 +258,6 @@ function applyTheme() {
 applyTheme();
 if (schemeQuery.addEventListener) schemeQuery.addEventListener("change", applyTheme);
 else if (schemeQuery.addListener) schemeQuery.addListener(applyTheme);
-
-/* ============================================================
-   viewport (wide layout on phones when forceLandscape is on)
-   ============================================================ */
 
 const MOBILE_UA = navigator.userAgentData && typeof navigator.userAgentData.mobile === "boolean"
   ? navigator.userAgentData.mobile
@@ -302,10 +290,6 @@ function pointOf(event) {
 layout();
 window.addEventListener("resize", layout);
 window.addEventListener("orientationchange", layout);
-
-/* ============================================================
-   page content
-   ============================================================ */
 
 const gate = $("gate");
 const card = $("card");
@@ -436,8 +420,6 @@ function buildNotFound() {
   card.appendChild(wrap);
 }
 
-/* ---------- typed line ---------- */
-
 const TAGS = (Array.isArray(CFG.tag) ? CFG.tag : [CFG.tag]).filter(Boolean);
 let typeTimer = null;
 
@@ -487,10 +469,6 @@ function reserveLineHeight() {
   line.style.minHeight = `${tallest}px`;
   line.textContent = original;
 }
-
-/* ============================================================
-   audio, gate and entrance
-   ============================================================ */
 
 let entered = false;
 
@@ -558,10 +536,6 @@ function whenReady(task) {
   Promise.all([loaded, fonts]).then(go);
   setTimeout(go, 3000);
 }
-
-/* ============================================================
-   3D tilt and dragging (only runs when tilt or drag is on)
-   ============================================================ */
 
 function startMotion() {
   const coarse = window.matchMedia("(pointer: coarse)").matches;
@@ -781,10 +755,6 @@ function startMotion() {
   requestAnimationFrame(tick);
 }
 
-/* ============================================================
-   rain particles and mouse sparks
-   ============================================================ */
-
 function startParticles() {
   const canvas = $("drift");
   const count = Math.round(num(CFG.particleCount, 70, 0, 400));
@@ -937,9 +907,7 @@ function startSparks() {
   window.addEventListener("resize", resize);
 }
 
-/* ============================================================
-   start
-   ============================================================ */
+lockContent();
 
 if (NOT_FOUND) buildNotFound();
 else buildProfile();
