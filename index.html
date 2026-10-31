@@ -1,13 +1,48 @@
-<!--
-hi you can get the whole project at https://github.com/ArchIsDead/suic1.de.profile
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title></title>
-<link rel="icon" id="icon">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- seo:start -->
+<title>4ndra</title>
+<meta name="description" content="IBlameMyself">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<link rel="canonical" href="https://4ndra.com/">
+<meta name="author" content="4ndra">
+<meta name="application-name" content="4ndra">
+<meta name="apple-mobile-web-app-title" content="4ndra">
+<meta name="theme-color" content="#060606">
+<meta name="color-scheme" content="dark light">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="4ndra">
+<meta property="og:title" content="4ndra">
+<meta property="og:description" content="IBlameMyself">
+<meta property="og:url" content="https://4ndra.com/">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://4ndra.com/og-image.png">
+<meta property="og:image:alt" content="4ndra, IBlameMyself">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="4ndra">
+<meta name="twitter:description" content="IBlameMyself">
+<meta name="twitter:image" content="https://4ndra.com/og-image.png">
+<meta name="twitter:image:alt" content="4ndra, IBlameMyself">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<link rel="preload" href="/Daydream.otf" as="font" type="font/otf" crossorigin>
+<link rel="preload" href="/PressStart2P.ttf" as="font" type="font/ttf" crossorigin>
+<style id="fonts">@font-face{font-family:"Name Font";src:url("Daydream.otf");font-display:block}@font-face{font-family:"Text Font";src:url("PressStart2P.ttf");font-display:block}</style>
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QFRYX9FPTJ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-QFRYX9FPTJ');</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://4ndra.com/#website","url":"https://4ndra.com/","name":"4ndra","description":"IBlameMyself","inLanguage":"en"},{"@type":"ProfilePage","@id":"https://4ndra.com/#profile","url":"https://4ndra.com/","name":"4ndra","description":"IBlameMyself","inLanguage":"en","dateModified":"2026-10-31","isPartOf":{"@id":"https://4ndra.com/#website"},"mainEntity":{"@id":"https://4ndra.com/#person"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://4ndra.com/avatar.png"}},{"@type":"Person","@id":"https://4ndra.com/#person","name":"4ndra","url":"https://4ndra.com/","image":"https://4ndra.com/avatar.png","description":"Hi, I'm 4ndra. Some people call me arch. I'm from Indonesia and I'm a student. I work as a Roblox game tester for Sahabat Productions. I'm into cute things, and I'm also a developer who makes things.","alternateName":["arch"],"jobTitle":"Roblox game tester","worksFor":{"@type":"Organization","name":"Sahabat Productions"},"address":{"@type":"PostalAddress","addressCountry":"ID"},"sameAs":["https://discord.gg/B5JP6zRRHe","https://t.me/archsix","https://github.com/ArchIsDead"]}]}</script>
+<!-- seo:end -->
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,23 +55,26 @@ hi you can get the whole project at https://github.com/ArchIsDead/suic1.de.profi
 
   <div id="back"></div>
   <canvas id="drift"></canvas>
-  <audio id="track" loop></audio>
+  <audio id="track" preload="none"></audio>
 
-  <button id="sound" aria-label="toggle sound">
+  <button id="sound" type="button" aria-label="toggle music">
     <img id="speaker" src="" alt="">
   </button>
 
-  <div id="card">
-    <div id="head">
+  <main id="card">
+<!-- card:start -->
+    <header id="head">
       <div id="pfp"></div>
       <div id="who">
-        <h1 id="handle"></h1>
-        <p id="line"></p>
+        <h1 id="handle">4ndra</h1>
+        <p id="line">IBlameMyself</p>
       </div>
-    </div>
+    </header>
     <div id="buttons"></div>
-    <div id="links"></div>
-  </div>
+    <section id="about"><h2 id="about-title">about me</h2><p id="about-text">Hi, I'm 4ndra. Some people call me arch. I'm from Indonesia and I'm a student. I work as a Roblox game tester for Sahabat Productions. I'm into cute things, and I'm also a developer who makes things. I play Roblox the most, and I play Minecraft too. I'm still learning and I'm not great at anything. My dream is to have a stable job. I'm a bit sensitive, so please be kind to me.</p></section>
+    <nav id="links" aria-label="links"><a href="https://discord.gg/B5JP6zRRHe" rel="me noopener noreferrer">Discord</a><a href="https://t.me/archsix" rel="me noopener noreferrer">Telegram</a><a href="https://github.com/ArchIsDead" rel="me noopener noreferrer">GitHub</a></nav>
+<!-- card:end -->
+  </main>
 
 </div>
 
