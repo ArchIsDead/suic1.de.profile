@@ -44,7 +44,7 @@ const CFG = {
   font: "Daydream.otf",
   fontText: "PressStart2P.ttf",
 
-  audio: "Good Looking_spotdown.org.mp3",
+  audio: "smells like teen spirit - hood trap bass boosted_spotdown.org.mp3",
   audioVolume: 0.6,
   audioLoop: true,
   playIcon: "icon-play.png",
