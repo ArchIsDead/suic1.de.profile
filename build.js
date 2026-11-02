@@ -42,6 +42,9 @@ const TITLE = oneLine(CFG.siteTitle || CFG.name);
 const DESCRIPTION = oneLine(CFG.siteDescription);
 const NAME = oneLine(CFG.name);
 const ABOUT = oneLine(CFG.aboutText);
+const FAQ = (CFG.faq || [])
+  .filter(item => item && item.q && item.a)
+  .map(item => ({ q: oneLine(item.q), a: oneLine(item.a) }));
 const TAGS = (Array.isArray(CFG.tag) ? CFG.tag : [CFG.tag]).filter(Boolean);
 const KEYWORDS = [...new Set((CFG.keywords || []).map(oneLine).filter(Boolean))];
 const ALTERNATE_NAMES = [...new Set(KEYWORDS
@@ -65,7 +68,7 @@ function lastModified() {
     const out = execSync("git log -1 --format=%cI", { cwd: ROOT, stdio: ["ignore", "pipe", "ignore"] }).toString().trim();
     if (out) return out;
   } catch (e) {}
-  return new Date().toISOString();
+  return `${new Date().toISOString().slice(0, 10)}T00:00:00+00:00`;
 }
 const MODIFIED = lastModified();
 const LASTMOD = MODIFIED.slice(0, 10);
@@ -83,7 +86,7 @@ const FONT_MIME = { otf: "font/otf", ttf: "font/ttf", woff: "font/woff", woff2: 
 const extOf = file => (String(file).split("?")[0].split(".").pop() || "").toLowerCase();
 
 [
-  ["avatar", CFG.avatar], ["favicon", CFG.favicon], ["thumbnail", CFG.thumbnail], ["bg", CFG.bg],
+  ["avatar", CFG.avatar], ["favicon", CFG.favicon], ["thumbnail", ["banner.png", "og-image.png"].includes(CFG.thumbnail) ? "" : CFG.thumbnail], ["bg", CFG.bg],
   ["audio", CFG.showMusic ? CFG.audio : ""], ["font", CFG.font], ["fontText", CFG.fontText],
   ["cursor", CFG.cursor], ["playIcon", CFG.playIcon], ["pauseIcon", CFG.pauseIcon],
   ["particleImage", CFG.particleType === "image" ? CFG.particleImage : ""],
@@ -184,7 +187,7 @@ async function fontsApplied(family) {
 async function buildPreview() {
   const target = CFG.thumbnail;
   const staticImage = /\.(png|jpe?g|webp)$/i.test(CFG.avatar);
-  if (target !== "og-image.png" || !sharp || !staticImage) return;
+  if (!["banner.png", "og-image.png"].includes(target) || !sharp || !staticImage) return;
   if (![CFG.avatar, CFG.font, CFG.fontText].every(exists)) return;
 
   const nameFamily = fontFamily(CFG.font);
@@ -241,13 +244,16 @@ async function buildPreview() {
     .png()
     .toBuffer();
 
-  fs.writeFileSync(path.join(ROOT, "og-image.png"), png);
+  fs.writeFileSync(path.join(ROOT, target), png);
 }
 
 function structuredData() {
   const profileUrl = ORIGIN + "/";
   const image = abs(CFG.avatar);
-  const sameAs = (CFG.links || []).map(l => l.u).filter(u => /^https?:\/\//i.test(u));
+  const ownSites = (CFG.buttons || []).map(b => b.u).filter(u => {
+    try { return new URL(u).hostname.endsWith("." + HOST); } catch (e) { return false; }
+  });
+  const sameAs = [...new Set([...(CFG.links || []).map(l => l.u), ...ownSites])].filter(u => /^https?:\/\//i.test(u));
 
   const person = {
     "@type": "Person",
@@ -267,7 +273,7 @@ function structuredData() {
         "@type": "WebSite",
         "@id": profileUrl + "#website",
         url: profileUrl,
-        name: TITLE,
+        name: NAME,
         description: DESCRIPTION,
         inLanguage: "en",
       },
@@ -278,13 +284,26 @@ function structuredData() {
         name: TITLE,
         description: DESCRIPTION,
         inLanguage: "en",
-        dateModified: LASTMOD,
+        dateModified: MODIFIED,
         ...(KEYWORDS.length ? { keywords: KEYWORDS.join(", ") } : {}),
         isPartOf: { "@id": profileUrl + "#website" },
         mainEntity: { "@id": profileUrl + "#person" },
         primaryImageOfPage: { "@type": "ImageObject", url: image },
       },
       person,
+      ...(FAQ.length ? [{
+        "@type": "FAQPage",
+        "@id": profileUrl + "#faq",
+        url: profileUrl,
+        inLanguage: "en",
+        isPartOf: { "@id": profileUrl + "#website" },
+        about: { "@id": profileUrl + "#person" },
+        mainEntity: FAQ.map(({ q, a }) => ({
+          "@type": "Question",
+          name: q,
+          acceptedAnswer: { "@type": "Answer", text: a },
+        })),
+      }] : []),
     ],
   };
 }
@@ -331,13 +350,13 @@ function profileHead() {
     '<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">',
     `<link rel="canonical" href="${ORIGIN}/">`,
     `<meta name="author" content="${esc(NAME)}">`,
-    `<meta name="application-name" content="${esc(TITLE)}">`,
-    `<meta name="apple-mobile-web-app-title" content="${esc(TITLE)}">`,
+    `<meta name="application-name" content="${esc(NAME)}">`,
+    `<meta name="apple-mobile-web-app-title" content="${esc(NAME)}">`,
     `<meta name="theme-color" content="${esc(CFG.chromeColor || "#060606")}">`,
     '<meta name="color-scheme" content="dark light">',
     '<meta name="format-detection" content="telephone=no">',
     `<meta property="og:type" content="website">`,
-    `<meta property="og:site_name" content="${esc(TITLE)}">`,
+    `<meta property="og:site_name" content="${esc(NAME)}">`,
     `<meta property="og:title" content="${esc(TITLE)}">`,
     `<meta property="og:description" content="${esc(DESCRIPTION)}">`,
     `<meta property="og:url" content="${ORIGIN}/">`,
@@ -379,6 +398,11 @@ function profileCard() {
   const about = ABOUT
     ? `<section id="about"><h2 id="about-title">${esc(CFG.aboutTitle || "")}</h2><p id="about-text">${esc(CFG.aboutText)}</p></section>`
     : "";
+  const rows = FAQ.map(({ q, a }) => `<details name="faq"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("");
+  const faq = FAQ.length
+    ? `<section id="faq"><h2 id="faq-title">${esc(CFG.faqTitle || "")}</h2><div id="faq-list">${rows}</div></section>`
+    : "";
+  const details = about || faq ? `<div id="details">${about}${faq}</div>` : "";
   return [
     '    <header id="head">',
     '      <div id="pfp"></div>',
@@ -388,7 +412,7 @@ function profileCard() {
     "      </div>",
     "    </header>",
     `    <div id="buttons">${buttons}</div>`,
-    about ? `    ${about}` : "",
+    details ? `    ${details}` : "",
     `    <nav id="links" aria-label="links">${links}</nav>`,
   ].filter(Boolean).join("\n");
 }
@@ -429,6 +453,16 @@ function sitemap() {
   ].join("\n");
 }
 
+function llms() {
+  const lines = [`# ${NAME}`, "", `> ${DESCRIPTION}`, ""];
+  if (ABOUT) lines.push("## About", "", ABOUT, "");
+  if (FAQ.length) lines.push("## Questions and answers", "", ...FAQ.map(({ q, a }) => `- ${q} ${a}`), "");
+  const own = (CFG.buttons || []).filter(b => b.u).map(b => `- [${b.label}](${b.u})${b.desc ? `: ${b.desc}` : ""}`);
+  const social = (CFG.links || []).map(l => `- [${l.n}](${l.u})`);
+  lines.push("## Links", "", `- [${NAME}](${ORIGIN}/)`, ...own, ...social, "");
+  return lines.join("\n");
+}
+
 const robots = () => `User-agent: *\nAllow: /\n\nSitemap: ${ORIGIN}/sitemap.xml\n`;
 
 function manifest() {
@@ -439,7 +473,7 @@ function manifest() {
       ]
     : [];
   return JSON.stringify({
-    name: TITLE,
+    name: NAME,
     short_name: NAME,
     description: DESCRIPTION,
     start_url: "/",
@@ -570,6 +604,7 @@ function assemble() {
   fs.rmSync(path.join(ROOT, "_worker.js"), { force: true });
   write("sitemap.xml", sitemap());
   write("robots.txt", robots());
+  write("llms.txt", llms());
   write("site.webmanifest", manifest());
   write("_headers", headers());
   assemble();
