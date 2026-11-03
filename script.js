@@ -88,13 +88,56 @@ function media(path, className) {
   return image;
 }
 
+function drawSymbol(target, symbol) {
+  const size = 64;
+  const ratio = Math.min(window.devicePixelRatio || 1, 3);
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    target.textContent = symbol;
+    return;
+  }
+
+  canvas.width = Math.round(size * ratio);
+  canvas.height = Math.round(size * ratio);
+  canvas.style.width = `${size}px`;
+  canvas.style.height = `${size}px`;
+  canvas.setAttribute("aria-hidden", "true");
+  ctx.scale(ratio, ratio);
+
+  const family = getComputedStyle(root).getPropertyValue("--font-text").trim() || "monospace";
+  const ink = font => {
+    ctx.font = `${font}px ${family}`;
+    const box = ctx.measureText(symbol);
+    return {
+      box,
+      width: box.actualBoundingBoxLeft + box.actualBoundingBoxRight,
+      height: box.actualBoundingBoxAscent + box.actualBoundingBoxDescent,
+    };
+  };
+
+  const probe = ink(100);
+  const fontSize = 100 * 52 / Math.max(probe.width, probe.height, 1);
+  const fit = ink(fontSize);
+
+  ctx.fillStyle = getComputedStyle(root).getPropertyValue("--text").trim() || "#f4f4f4";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillText(
+    symbol,
+    (size - fit.width) / 2 + fit.box.actualBoundingBoxLeft,
+    (size - fit.height) / 2 + fit.box.actualBoundingBoxAscent
+  );
+  target.appendChild(canvas);
+}
+
 function fillIcon(target, value) {
   target.textContent = "";
   if (!value) return;
   const isFile = /\.(png|jpe?g|gif|webp|svg|mp4|webm|mov|m4v)(\?|#|$)/i.test(value);
   const isLink = /^https?:\/\//i.test(value);
   if (isFile || isLink) target.appendChild(media(value));
-  else target.textContent = value;
+  else drawSymbol(target, value);
 }
 
 function onGesture(task) {
@@ -302,7 +345,9 @@ $("back").appendChild(media(CFG.bg, "backmedia"));
 function buildProfile() {
   const links = $("links");
   const buttons = $("buttons");
+  const details = $("details");
   const about = $("about");
+  const faq = $("faq");
   const line = $("line");
   const handle = $("handle");
 
@@ -386,11 +431,33 @@ function buildProfile() {
     about.remove();
   }
 
+  const questions = (CFG.faq || []).filter(item => item && item.q && item.a);
+  if (questions.length) {
+    $("faq-title").textContent = CFG.faqTitle || "";
+    if (!CFG.faqTitle) $("faq-title").remove();
+    const list = $("faq-list");
+    list.textContent = "";
+    questions.forEach(({ q, a }) => {
+      const row = document.createElement("details");
+      const question = document.createElement("summary");
+      const answer = document.createElement("p");
+      row.setAttribute("name", "faq");
+      question.textContent = q;
+      answer.textContent = a;
+      row.append(question, answer);
+      list.appendChild(row);
+    });
+  } else {
+    faq.remove();
+  }
+
+  if (!about.isConnected && !faq.isConnected) details.remove();
+
   const group = [];
   const aboutAbove = CFG.aboutPosition === "above";
-  if (aboutAbove && about.isConnected) group.push(about);
+  if (aboutAbove && details.isConnected) group.push(details);
   if (buttons.isConnected) group.push(buttons);
-  if (!aboutAbove && about.isConnected) group.push(about);
+  if (!aboutAbove && details.isConnected) group.push(details);
 
   if (CFG.buttonsPosition === "above") card.append(...group, links);
   else card.append(links, ...group);

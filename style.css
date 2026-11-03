@@ -91,7 +91,8 @@ body {
 }
 
 a:focus-visible,
-button:focus-visible {
+button:focus-visible,
+summary:focus-visible {
   outline: 2px solid var(--accent-bright);
   outline-offset: 3px;
 }
@@ -135,6 +136,10 @@ html.rotated body {
 
 #mark[data-spin] {
   animation: spin 6s linear infinite;
+}
+
+#mark canvas {
+  display: block;
 }
 
 #mark img, #mark video {
@@ -382,18 +387,27 @@ html:not([data-noshine]) #card::after {
   50% { opacity: 0; }
 }
 
-#about {
+#details {
+  display: flex;
   flex: 0 1 auto;
+  flex-direction: column;
+  gap: 20px;
   min-height: 0;
-  padding: 2px 6px 2px 14px;
+  max-height: 340px;
+  padding-right: 6px;
   overflow-y: auto;
   touch-action: pan-x pan-y;
-  border-left: 4px solid var(--line-dim);
   scrollbar-width: thin;
   scrollbar-color: var(--accent-bright) transparent;
 }
 
-#about-title {
+#about {
+  padding: 2px 0 2px 14px;
+  border-left: 4px solid var(--line-dim);
+}
+
+#about-title,
+#faq-title {
   margin-bottom: 10px;
   font: 8px/1.4 var(--font-text);
   letter-spacing: 1px;
@@ -401,7 +415,8 @@ html:not([data-noshine]) #card::after {
   color: var(--accent-bright);
 }
 
-#about-title::before {
+#about-title::before,
+#faq-title::before {
   content: "> ";
 }
 
@@ -410,6 +425,50 @@ html:not([data-noshine]) #card::after {
   color: var(--text);
   white-space: pre-line;
   overflow-wrap: anywhere;
+}
+
+#faq-list details {
+  border-bottom: 2px dashed var(--line-dim);
+}
+
+#faq-list details:last-child {
+  border-bottom: 0;
+}
+
+#faq-list summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  list-style: none;
+  font: 8px/1.7 var(--font-text);
+  color: var(--text);
+  cursor: pointer;
+}
+
+#faq-list summary::-webkit-details-marker {
+  display: none;
+}
+
+#faq-list summary::after {
+  content: "+";
+  flex-shrink: 0;
+  color: var(--accent-bright);
+}
+
+#faq-list details[open] summary::after {
+  content: "-";
+}
+
+#faq-list summary:hover {
+  color: var(--accent-bright);
+}
+
+#faq-list details > p {
+  padding: 0 0 14px;
+  font: 8px/2 var(--font-text);
+  color: var(--text-soft);
+  animation: rise 300ms steps(4) both;
 }
 
 #buttons {
@@ -586,6 +645,7 @@ html:not([data-noshine]) #card::after {
   #mark[data-spin],
   #line::after,
   #card.in > *,
+  #faq-list details > p,
   #handle.hop,
   .coin[data-copied] img {
     animation: none;

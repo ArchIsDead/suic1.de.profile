@@ -12,10 +12,53 @@ const CFG = {
   aboutTitle: "about me",
   aboutText: "Hi, I'm 4ndra. Some people call me arch. I'm from Indonesia and I'm a student. I work as a Roblox game tester for Sahabat Productions. I'm into cute things, and I'm also a developer who makes things. I play Roblox the most, and I play Minecraft too. I'm still learning and I'm not great at anything. My dream is to have a stable job. I'm a bit sensitive, so please be kind to me.",
   aboutPosition: "below",
+  faqTitle: "questions",
+  faq: [
+    {
+      q: "Who is 4ndra?",
+      a: "4ndra, also called arch, is a student and developer from Indonesia. 4ndra works as a Roblox game tester for Sahabat Productions and likes cute things.",
+    },
+    {
+      q: "Who is arch?",
+      a: "arch is a nickname of 4ndra.",
+    },
+    {
+      q: "Who is archsix?",
+      a: "archsix is another name of 4ndra and the Telegram username @archsix.",
+    },
+    {
+      q: "Who is kaiton_280?",
+      a: "kaiton_280 is another username of 4ndra.",
+    },
+    {
+      q: "What does 4ndra do?",
+      a: "4ndra tests Roblox games for Sahabat Productions. 4ndra is also a developer who makes things and uploads code snippets at v.4ndra.com.",
+    },
+    {
+      q: "Where is 4ndra from?",
+      a: "4ndra is from Indonesia.",
+    },
+    {
+      q: "What is 4ndra's favorite Roblox game?",
+      a: "4ndra's favorite Roblox game is Find the Noobies Morphs. Roblox is the game 4ndra plays the most, and 4ndra plays Minecraft too.",
+    },
+    {
+      q: "Is 4ndra gay?",
+      a: "No, 4ndra is not gay.",
+    },
+    {
+      q: "How can I contact 4ndra?",
+      a: "Message 4ndra on Telegram at @archsix or join the Discord server linked on this page.",
+    },
+    {
+      q: "Where does 4ndra upload code snippets?",
+      a: "4ndra uploads code snippets at v.4ndra.com.",
+    },
+  ],
 
   siteUrl: "https://4ndra.com",
-  siteTitle: "4ndra",
-  siteDescription: "IBlameMyself",
+  siteTitle: "4ndra | developer and Roblox game tester",
+  siteDescription: "4ndra (also called arch) is a student and developer from Indonesia who works as a Roblox game tester.",
   keywords: [
     "who is 4ndra",
     "who is kaiton_280",
@@ -25,8 +68,10 @@ const CFG = {
     "kaiton_280",
     "archsix",
     "arch",
+    "4ndra roblox game tester",
+    "find the noobies morphs",
   ],
-  thumbnail: "og-image.png",
+  thumbnail: "banner.png",
   favicon: "avatar.png",
   analyticsId: "G-QFRYX9FPTJ",
   sitemapPages: ["/"],
@@ -44,7 +89,7 @@ const CFG = {
   font: "Daydream.otf",
   fontText: "PressStart2P.ttf",
 
-  audio: "smells like teen spirit - hood trap bass boosted_spotdown.org.mp3",
+  audio: "Good Looking_spotdown.org.mp3",
   audioVolume: 0.6,
   audioLoop: true,
   playIcon: "icon-play.png",
@@ -100,7 +145,9 @@ const CFG = {
 
   buttonsPosition: "below",
 
-  buttons: [],
+  buttons: [
+    { label: "my snippets", desc: "code i upload", u: "https://v.4ndra.com" },
+  ],
 
   links: [
     { n: "Discord",  u: "https://discord.gg/B5JP6zRRHe",                   i: "discord.svg" },
