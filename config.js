@@ -12,6 +12,13 @@ const CFG = {
   aboutTitle: "about me",
   aboutText: "Hi, I'm 4ndra. Some people call me arch. I'm from Indonesia and I'm a student. I work as a Roblox game tester for Sahabat Productions. I'm into cute things, and I'm also a developer who makes things. I play Roblox the most, and I play Minecraft too. I'm still learning and I'm not great at anything. My dream is to have a stable job. I'm a bit sensitive, so please be kind to me.",
   aboutPosition: "below",
+  faqTitle: "questions",
+  faq: [
+    {
+      q: "How can I contact 4ndra?",
+      a: "Message 4ndra on Telegram at @archsix or join the Discord server linked on this page.",
+    },
+  ],
 
   siteUrl: "https://4ndra.com",
   siteTitle: "4ndra | developer and Roblox game tester",
